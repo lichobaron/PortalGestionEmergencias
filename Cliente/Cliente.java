@@ -1,8 +1,7 @@
 package javeriana.edu.co;
 
-import java.net.Socket;
-import java.io.OutputStream;
-import java.io.ObjectOutputStream;
+import java.net.*;
+import java.io.*;
 
 import javeriana.edu.co.Mensaje;
 
@@ -12,11 +11,15 @@ class Cliente {
 		prueba.addTema("Inundaciones");
 		System.out.println(prueba);
 		try {
-			Socket clientSocket = new Socket("localhost", 6789);
-			OutputStream outToServer = clientSocket.getOutputStream();
-			ObjectOutputStream objectOTS = new ObjectOutputStream(outToServer);
-
-			objectOTS.writeObject(prueba);
+			DatagramSocket clientSocket = new DatagramSocket();       
+			InetAddress IPAddress = InetAddress.getByName("localhost");       			
+			ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+			ObjectOutput sendData = new ObjectOutputStream(bStream); 
+			sendData.writeObject(prueba);
+			sendData.close();
+			byte[] serializedMessage = bStream.toByteArray();
+			DatagramPacket sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, 9876);
+			clientSocket.send(sendPacket);            	
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(e); 
