@@ -5,9 +5,9 @@ import java.io.*;
 import java.util.concurrent.*;
 
 import javeriana.edu.co.Mensaje;
-import javeriana.edu.co.Cliente;
-import javeriana.edu.co.Tema;
-import javeriana.edu.co.Fuente;
+import javeriana.edu.co.ClienteGestor;
+import javeriana.edu.co.TemaGestor;
+import javeriana.edu.co.FuenteGestor;
 import java.util.Vector;
 
 
@@ -21,15 +21,23 @@ class Gestor {
 	public static ConcurrentLinkedQueue<Mensaje> colaSubscripcionesFuente;
 	public static ConcurrentLinkedQueue<Mensaje> colaEnviodeMensajes;
 
-	private Vector<Cliente> clientes;
-	private Vector<Tema> temas;
-	private Vector<Fuente> fuentes;
-	private Vector<Mensaje> mensajes;
+	public static Vector<ClienteGestor> clientes;
+	public static Vector<TemaGestor> temas;
+	public static Vector<FuenteGestor> fuentes;
+
+	public static InetAddress ipMensaje;
+	public static int puertoMensaje;
 
 	public static void main(String[] args) {
+
+
 		colaSubscripcionesCliente = new ConcurrentLinkedQueue<>(); 
 		colaSubscripcionesFuente = new ConcurrentLinkedQueue<>(); 
 		colaEnviodeMensajes = new ConcurrentLinkedQueue<>(); 
+
+		clientes = new Vector<ClienteGestor>();
+		temas = new Vector<TemaGestor>();
+		fuentes = new Vector<FuenteGestor>();
 
 		ClienteThread clienteThread = new ClienteThread(colaSubscripcionesCliente);
 		FuenteThread fuenteThread = new FuenteThread(colaSubscripcionesFuente);
@@ -46,6 +54,8 @@ class Gestor {
 
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
+				ipMensaje = receivePacket.getAddress();
+				puertoMensaje = receivePacket.getPort();
 				byte[] data = receivePacket.getData();
 				ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(data));
 				Mensaje mensaje = (Mensaje)iStream.readObject();
@@ -82,23 +92,64 @@ class Gestor {
 class ClienteThread extends Thread {
 
 	private ConcurrentLinkedQueue<Mensaje> colaSubscripcionesCliente;
+	private InetAddress ipCliente;
+	private int puertoCliente;
 
 	public ClienteThread(ConcurrentLinkedQueue<Mensaje> colaSubscripcionesCliente){
 		this.colaSubscripcionesCliente = colaSubscripcionesCliente;
 	}
 
 	public void run () {
-		/*
+		
 		while(true){
 			if(colaSubscripcionesCliente.peek()!=null){
-				System.out.println("Subscripción cliente terminada!"); 
+				String errors = "";
+				boolean added = false;
+				Mensaje m = colaSubscripcionesCliente.peek();
+				this.ipCliente = Gestor.ipMensaje;
+				this.puertoCliente = Gestor.puertoMensaje;
+				ClienteGestor c = new ClienteGestor(this.ipCliente,this.puertoCliente,m.getNombreUsuario());
+				Gestor.clientes.add(c);
+				for(String s : m.getTemas()){
+					added = false;
+					for(TemaGestor t : Gestor.temas){
+						if(t.getNombre().equals(s)){
+							boolean exist = false;
+							for(ClienteGestor u: t.getClientes()){
+								if(u.getNombreUsuario().equals(u.getNombreUsuario())){
+									exist = true;
+									break;
+								}		
+							}
+							if(!exist){
+								System.out.println("Entré");
+								t.addCliente(c);
+								added = true;
+								break;
+							}else{
+								errors += "El cliente ya se encuentra registrado con el tema "+ s+"\n";
+							}
+						}
+					}
+					if(!added){
+						TemaGestor tNuevo = new TemaGestor(s);
+						tNuevo.addCliente(c);
+						Gestor.temas.add(tNuevo);
+						break;
+					}	
+				}
+				if(errors == ""){
+					System.out.println("Subscripción cliente terminada!"); 
+				}else{
+					System.out.println(errors); 
+				}
 				colaSubscripcionesCliente.remove();
 			}
-		}*/  
-	  	try {
+		}
+	  	/*try {
 			while(true){
 				if(colaSubscripcionesCliente.peek()!=null){
-					sleep(10000);
+					sleep(1000);
 					System.out.println("Subscripción cliente terminada!"); 
 					colaSubscripcionesCliente.remove();
 				}
@@ -106,13 +157,15 @@ class ClienteThread extends Thread {
 	  	} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.out.println(e);
-		}
+		}*/
 	}
 }
 
 class FuenteThread extends Thread {
 
 	private ConcurrentLinkedQueue<Mensaje> colaSubscripcionesFuente;
+	private InetAddress ipFuente;
+	private int puertoFuente;
 
 	public FuenteThread(ConcurrentLinkedQueue<Mensaje> colaSubscripcionesFuente){
 		this.colaSubscripcionesFuente = colaSubscripcionesFuente;
@@ -121,6 +174,11 @@ class FuenteThread extends Thread {
 	public void run () {
 		while(true){
 			if(colaSubscripcionesFuente.peek()!=null){
+				Mensaje m = colaSubscripcionesFuente.peek();
+				this.ipFuente = Gestor.ipMensaje;
+				this.puertoFuente = Gestor.puertoMensaje;
+				FuenteGestor f = new FuenteGestor(this.ipFuente,this.puertoFuente,m.getNombreUsuario());
+				Gestor.fuentes.add(f);	
 				System.out.println("Subscripción fuente terminada!");
 				colaSubscripcionesFuente.remove();
 			}
