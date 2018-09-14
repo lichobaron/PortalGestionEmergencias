@@ -12,11 +12,13 @@ class Mensaje implements Serializable {
 	private Tipo tipo;
 	private List<String> temas;
 	private String cuerpo;
+	private String nombreUsuario;
 
-	Mensaje(Tipo tipo, String cuerpo) {
+	Mensaje(Tipo tipo, String cuerpo, String nombreUsuario) {
 		this.tipo = tipo;
 		this.temas = new Vector<String>();
 		this.cuerpo = cuerpo;
+		this.nombreUsuario = nombreUsuario;
 	}
 
 	public Tipo getTipo() {
@@ -41,6 +43,14 @@ class Mensaje implements Serializable {
 
 	public void setCuerpo(String cuerpo) {
 		this.cuerpo = cuerpo;
+	}
+
+	public String getNombreUsuario() {
+		return this.nombreUsuario;
+	}
+
+	public void setNombreUsuario(String nombreUsuario) {
+		this.nombreUsuario = nombreUsuario;
 	}
 
 	public void addTema(String tema) {

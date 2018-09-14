@@ -7,7 +7,7 @@ import javeriana.edu.co.Mensaje;
 
 class Fuente {
 	public static void main(String[] args) {
-		Mensaje prueba = new Mensaje(Mensaje.Tipo.SUBSFUEN, "Holi");
+		Mensaje prueba = new Mensaje(Mensaje.Tipo.SUBSFUEN, "Holi","SoyFuente");
 		prueba.addTema("Cachipai");
 		System.out.println(prueba);
 		try {
