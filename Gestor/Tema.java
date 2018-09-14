@@ -18,6 +18,14 @@ class Tema {
         clientes = new Vector<Cliente>();
     }
 
+    public String getNombre() {
+        return this.nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
     public Vector<Cliente> getClientes() {
         return this.clientes;
     }
