@@ -5,6 +5,11 @@ import java.io.*;
 import java.util.concurrent.*;
 
 import javeriana.edu.co.Mensaje;
+import javeriana.edu.co.Cliente;
+import javeriana.edu.co.Tema;
+import javeriana.edu.co.Fuente;
+import java.util.Vector;
+
 
 class Gestor {
 
@@ -16,6 +21,11 @@ class Gestor {
 	public static ConcurrentLinkedQueue<Mensaje> colaSubscripcionesFuente;
 	public static ConcurrentLinkedQueue<Mensaje> colaEnviodeMensajes;
 
+	private Vector<Cliente> clientes;
+	private Vector<Tema> temas;
+	private Vector<Fuente> fuentes;
+	private Vector<Mensaje> mensajes;
+
 	public static void main(String[] args) {
 		colaSubscripcionesCliente = new ConcurrentLinkedQueue<>(); 
 		colaSubscripcionesFuente = new ConcurrentLinkedQueue<>(); 
@@ -23,7 +33,7 @@ class Gestor {
 
 		ClienteThread clienteThread = new ClienteThread(colaSubscripcionesCliente);
 		FuenteThread fuenteThread = new FuenteThread(colaSubscripcionesFuente);
-		PublishMessageThread publishMessageThread = new PublishMessageThread();
+		PublishMessageThread publishMessageThread = new PublishMessageThread(colaEnviodeMensajes);
 
 		clienteThread.start();
 		fuenteThread.start();
