@@ -7,7 +7,7 @@ import javeriana.edu.co.Mensaje;
 
 class Cliente {
 	public static void main(String[] args) {
-		Mensaje prueba = new Mensaje(Mensaje.Tipo.SUBSCLIE, "Holi");
+		Mensaje prueba = new Mensaje(Mensaje.Tipo.SUBSCLIE, "Holi", "kokoloko4");
 		prueba.addTema("Inundaciones");
 		System.out.println(prueba);
 		try {

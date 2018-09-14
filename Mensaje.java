@@ -62,13 +62,13 @@ class Mensaje implements Serializable {
 
 		switch(this.tipo) {
 			case SUBSCLIE:
-				string = String.format("tipo: subscricion cliente; tema: %s; " +
-					"cuerpo: %s", this.temas.get(0), this.cuerpo);
+				string = String.format("tipo: subscricion cliente; nombreUsuario: %s; tema: %s; " +
+					"cuerpo: %s", this.nombreUsuario, this.temas.get(0), this.cuerpo);
 				break;
 
 			case SUBSFUEN:
-				string = String.format("tipo: subscricion fuente; tema: %s; " +
-					"cuerpo: %s", this.temas.get(0), this.cuerpo);
+				string = String.format("tipo: subscricion fuente; nombreUsuario: %s; tema: %s; " +
+					"cuerpo: %s", this.nombreUsuario, this.temas.get(0), this.cuerpo);
 				break;
 
 			case NOTICI:
