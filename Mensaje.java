@@ -11,12 +11,14 @@ class Mensaje implements Serializable {
 
 	private Tipo tipo;
 	private List<String> temas;
+	private List<String> infoContext;
 	private String cuerpo;
 	private String nombreUsuario;
 
 	Mensaje(Tipo tipo, String cuerpo, String nombreUsuario) {
 		this.tipo = tipo;
 		this.temas = new Vector<String>();
+		this.infoContext = new Vector<String>();
 		this.cuerpo = cuerpo;
 		this.nombreUsuario = nombreUsuario;
 	}
@@ -57,18 +59,22 @@ class Mensaje implements Serializable {
 		this.temas.add(tema);
 	}
 
+	public void addInfoContext(String infoContext) {
+		this.infoContext.add(infoContext);
+	}
+
 	public String toString() {
 		String string = null;
 
 		switch(this.tipo) {
 			case SUBSCLIE:
 				string = String.format("tipo: subscricion cliente; nombreUsuario: %s; tema: %s; " +
-					"cuerpo: %s", this.nombreUsuario, this.temas.get(0), this.cuerpo);
+					"%s cuerpo: %s", this.nombreUsuario, this.temas.get(0), this.infoContext.get(0), this.cuerpo);
 				break;
 
 			case SUBSFUEN:
 				string = String.format("tipo: subscricion fuente; nombreUsuario: %s; tema: %s; " +
-					"cuerpo: %s", this.nombreUsuario, this.temas.get(0), this.cuerpo);
+					"%s cuerpo: %s", this.nombreUsuario, this.temas.get(0), this.infoContext.get(0), this.cuerpo);
 				break;
 
 			case NOTICI:

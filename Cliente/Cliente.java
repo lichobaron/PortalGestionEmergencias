@@ -9,6 +9,8 @@ class Cliente {
 	public static void main(String[] args) {
 		Mensaje prueba = new Mensaje(Mensaje.Tipo.SUBSCLIE, "Holi", "kokoloko4");
 		prueba.addTema("Inundaciones");
+		prueba.addInfoContext("residencia:cachipay");
+		prueba.addInfoContext("edad:18");
 		System.out.println(prueba);
 		try {
 			DatagramSocket clientSocket = new DatagramSocket();       
