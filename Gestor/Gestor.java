@@ -83,15 +83,37 @@ class Gestor {
 		return false;
 	}
 
-	public boolean existFuente(String username){
+	public ClienteGestor findCliente(String username){
+		int i = 0;
+		while(i<this.clientes.size()){
+			if(this.clientes.get(i).getNombreUsuario().equals(username)){
+				return this.clientes.get(i);
+			}
+			i++;
+		}
+		return null;
+	}
+
+	public boolean existFuente(String fuente){
 		int i = 0;
 		while(i<this.fuentes.size()){
-			if(this.fuentes.get(i).getNombreUsuario().equals(username)){
+			if(this.fuentes.get(i).getNombreUsuario().equals(fuente)){
 				return true;
 			}
 			i++;
 		}
 		return false;
+	}
+
+	public FuenteGestor findFuente(String fuente){
+		int i = 0;
+		while(i<this.fuentes.size()){
+			if(this.fuentes.get(i).getNombreUsuario().equals(fuente)){
+				return this.fuentes.get(i);
+			}
+			i++;
+		}
+		return null;
 	}
 
 	public boolean existTema(String tema){

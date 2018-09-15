@@ -1,9 +1,10 @@
 controlar info contexto - ya
 publish mensaje - ya
 prueba publish - ya
-si un cliente se vuelve a conectar actualizar ip y puerto
-enviar temas cliente
-enviar mensajes de error
+si un cliente se vuelve a conectar actualizar ip y puerto - ya
+enviar temas cliente - ya
+enviar mensajes de error al cliente
+    registro cliente en temas
     temas e info de contexto que exista
     registro fuente
     fuente info contexto valida

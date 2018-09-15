@@ -12,6 +12,7 @@ class Cliente {
 		prueba.addInfoContext("residencia:cachipay");
 		prueba.addInfoContext("edad:18");
 		System.out.println(prueba);
+		Mensaje prueba2 = new Mensaje(Mensaje.Tipo.TEMAS, "Holi", "kokoloko4");
 		byte[] receiveData = new byte[1024];
 		try {
 			DatagramSocket clientSocket = new DatagramSocket();       
@@ -24,6 +25,16 @@ class Cliente {
 			DatagramPacket sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, 9876);
 			clientSocket.send(sendPacket);
 			System.out.println("Mensaje enviado");
+          			
+			bStream = new ByteArrayOutputStream();
+			sendData = new ObjectOutputStream(bStream); 
+			sendData.writeObject(prueba2);
+			sendData.close();
+			serializedMessage = bStream.toByteArray();
+			sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, 9876);
+			clientSocket.send(sendPacket);
+			System.out.println("Mensaje2 enviado");
+
 			while (true) {
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				clientSocket.receive(receivePacket);

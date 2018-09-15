@@ -15,16 +15,23 @@ class MainGestor {
 		try {
 			DatagramSocket serverSocket = new DatagramSocket(9876);
 			byte[] receiveData = new byte[1024];
+
 			ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesCliente = new ConcurrentLinkedQueue<>(); 
 			ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesFuente = new ConcurrentLinkedQueue<>(); 
 			ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaEnviodeMensajes = new ConcurrentLinkedQueue<>();
+			ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaEnvioTemasDisponibles = new ConcurrentLinkedQueue<>();
+			
 			Gestor gestor = new Gestor();
+
 			ClienteThread clienteThread = new ClienteThread(gestor, colaSubscripcionesCliente);
 			FuenteThread fuenteThread = new FuenteThread(gestor, colaSubscripcionesFuente);
 			PublishMessageThread publishMessageThread = new PublishMessageThread(gestor, colaEnviodeMensajes, serverSocket);
+			TopicsThread topicsThread = new TopicsThread(gestor, colaEnvioTemasDisponibles, serverSocket);
+
 			clienteThread.start();
 			fuenteThread.start();
 			publishMessageThread.start();
+			topicsThread.start();
 	
 			while (true) {
 
@@ -53,7 +60,11 @@ class MainGestor {
 						case NOTICI:
 							System.out.println("Esperando envío de noticias");
 							colaEnviodeMensajes.add(t2);
-						   	break;
+							   break;
+						case TEMAS:
+							System.out.println("Esperando envío de temas");
+							colaEnvioTemasDisponibles.add(t2);
+						  break;
 						default :
 							System.out.println("Mensaje inválido"); 
 						   	break;

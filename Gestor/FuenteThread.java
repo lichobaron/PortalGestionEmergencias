@@ -23,10 +23,13 @@ class FuenteThread extends Thread {
 		InetAddress ipFuente;
 		int puertoFuente;
 		Mensaje m;
+		FuenteGestor fuenteGestor;
+
 		while(true){
 			if(colaSubscripcionesFuente.peek()!=null){
 				m = colaSubscripcionesFuente.peek().getKey();
-				if(!gestor.existFuente(m.getNombreUsuario())){
+				fuenteGestor = gestor.findFuente(m.getNombreUsuario());
+				if(fuenteGestor==null){
 					ipFuente = colaSubscripcionesFuente.peek().getValue().getKey();
 					puertoFuente = colaSubscripcionesFuente.peek().getValue().getValue();
 					FuenteGestor f = new FuenteGestor(ipFuente,puertoFuente,m.getNombreUsuario());
@@ -34,6 +37,8 @@ class FuenteThread extends Thread {
 					System.out.println("La fuente "+m.getNombreUsuario()+ " fue agregada.");							
 				}
 				else{
+					fuenteGestor.setIp(colaSubscripcionesFuente.peek().getValue().getKey());
+					fuenteGestor.setPuerto(colaSubscripcionesFuente.peek().getValue().getValue());
 					System.out.println("La fuente "+m.getNombreUsuario()+ " ya existe.");
 				}
 				System.out.println("Subscripción fuente terminada!");

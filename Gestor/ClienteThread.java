@@ -28,7 +28,8 @@ class ClienteThread extends Thread {
 			if(colaSubscripcionesCliente.peek()!=null){
 
 				m = colaSubscripcionesCliente.peek().getKey();
-				if(!gestor.existCliente(m.getNombreUsuario())){
+				ClienteGestor clienteGestor = gestor.findCliente(m.getNombreUsuario());
+				if(clienteGestor==null){
 					ipCliente = colaSubscripcionesCliente.peek().getValue().getKey();
 					puertoCliente = colaSubscripcionesCliente.peek().getValue().getValue();
 					ClienteGestor c = new ClienteGestor(ipCliente,puertoCliente,m.getNombreUsuario());
@@ -82,6 +83,8 @@ class ClienteThread extends Thread {
 					System.out.println("Subscripción cliente terminada!"); 
 				}
 				else{
+					clienteGestor.setIp(colaSubscripcionesCliente.peek().getValue().getKey());
+					clienteGestor.setPuerto(colaSubscripcionesCliente.peek().getValue().getValue());
 					System.out.println("El cliente "+ m.getNombreUsuario()+" ya existe."); 
 				}
 				colaSubscripcionesCliente.remove();
