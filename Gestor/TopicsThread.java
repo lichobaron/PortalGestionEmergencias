@@ -31,6 +31,7 @@ class TopicsThread extends Thread {
         ClienteGestor clienteGestor;
         DatagramSocket clientSocket;
         InetAddress IPAddress;
+        int puerto;
         ByteArrayOutputStream bStream;
         ObjectOutput sendData;
         byte[] serializedMessage;
@@ -38,32 +39,39 @@ class TopicsThread extends Thread {
 
 		while(true){
 			if(colaEnvioTemasDisponibles.peek()!=null){
-                System.out.println("Entre");
 				m = colaEnvioTemasDisponibles.peek().getKey();
 				clienteGestor = gestor.findCliente(m.getNombreUsuario());
 				if(clienteGestor==null){
-					System.out.println("El cliente "+m.getNombreUsuario()+ " no se encuentra registrado.");							
+                    IPAddress = colaEnvioTemasDisponibles.peek().getValue().getKey();
+					puerto = colaEnvioTemasDisponibles.peek().getValue().getValue();					
 				}
 				else{
-                    try {
-                        clientSocket = new DatagramSocket();       
-                        IPAddress = clienteGestor.getIp();    			
-                        bStream = new ByteArrayOutputStream();
-                        sendData = new ObjectOutputStream(bStream);
-                        m.setTipo(Mensaje.Tipo.TEMAS);
-                        m.setTemas(this.getTemas());
-                        m.setNombreUsuario("El gestor");
-                        sendData.writeObject(m);
-                        sendData.close();
-                        serializedMessage = bStream.toByteArray();
-                        sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, clienteGestor.getPuerto());
-                        clientSocket.send(sendPacket);
-                        System.out.println("Se ha enviado al cliente "+ clienteGestor.getNombreUsuario()+ " la lista de temas.");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.out.println(e); 
-                    }
+                    IPAddress = clienteGestor.getIp();
+                    puerto = clienteGestor.getPuerto();
+                }
+                try {
+                    clientSocket = new DatagramSocket();          			
+                    bStream = new ByteArrayOutputStream();
+                    sendData = new ObjectOutputStream(bStream);
+                    m.setTipo(Mensaje.Tipo.TEMAS);
+                    m.setTemas(this.getTemas());
+                    m.setNombreUsuario("El gestor");
+                    sendData.writeObject(m);
+                    sendData.close();
+                    serializedMessage = bStream.toByteArray();
+                    sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, puerto);
+                    clientSocket.send(sendPacket);
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println(e); 
+                }
+                if(clienteGestor==null){
+                    System.out.println("Se ha enviado al cliente sin registrar la lista de temas.");					
 				}
+				else{
+                    System.out.println("Se ha enviado al cliente "+ clienteGestor.getNombreUsuario()+ " la lista de temas.");
+                }
 				System.out.println("Envio de temas terminado!");
 				colaEnvioTemasDisponibles.remove();
 			}
