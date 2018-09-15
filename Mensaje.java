@@ -6,17 +6,19 @@ import java.io.Serializable;
 
 class Mensaje implements Serializable {
 	public static enum Tipo {
-		SUBSCLIE, SUBSFUEN, NOTICI
+		SUBSCLIE, SUBSFUEN, NOTICI, UPT, ERROR, TEMAS
 	}
 
 	private Tipo tipo;
 	private List<String> temas;
+	private List<String> infoContext;
 	private String cuerpo;
 	private String nombreUsuario;
 
 	Mensaje(Tipo tipo, String cuerpo, String nombreUsuario) {
 		this.tipo = tipo;
 		this.temas = new Vector<String>();
+		this.infoContext = new Vector<String>();
 		this.cuerpo = cuerpo;
 		this.nombreUsuario = nombreUsuario;
 	}
@@ -53,8 +55,20 @@ class Mensaje implements Serializable {
 		this.nombreUsuario = nombreUsuario;
 	}
 
+	public List<String> getInfoContext() {
+		return infoContext;
+	}
+
+	public void setInfoContext(List<String> infoContext) {
+		this.infoContext = infoContext;
+	}
+
 	public void addTema(String tema) {
 		this.temas.add(tema);
+	}
+
+	public void addInfoContext(String infoContext) {
+		this.infoContext.add(infoContext);
 	}
 
 	public String toString() {
@@ -62,13 +76,13 @@ class Mensaje implements Serializable {
 
 		switch(this.tipo) {
 			case SUBSCLIE:
-				string = String.format("tipo: subscricion cliente; tema: %s; " +
-					"cuerpo: %s", this.temas.get(0), this.cuerpo);
+				string = String.format("tipo: subscricion cliente; nombreUsuario: %s; tema: %s; " +
+					"%s cuerpo: %s", this.nombreUsuario, this.temas.get(0), this.infoContext.get(0), this.cuerpo);
 				break;
 
 			case SUBSFUEN:
-				string = String.format("tipo: subscricion fuente; tema: %s; " +
-					"cuerpo: %s", this.temas.get(0), this.cuerpo);
+				string = String.format("tipo: subscricion fuente; nombreUsuario: %s; " +
+					"cuerpo: %s", this.nombreUsuario, this.cuerpo);
 				break;
 
 			case NOTICI:

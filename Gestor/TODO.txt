@@ -1,0 +1,20 @@
+controlar info contexto - ya
+publish mensaje - ya
+prueba publish - ya
+si un cliente se vuelve a conectar actualizar ip y puerto
+enviar temas cliente
+enviar mensajes de error
+    temas e info de contexto que exista
+    registro fuente
+    fuente info contexto valida
+broker distribuido
+guardar noticias
+
+
+edad, residencia, genero, y grupo etnico
+inundaciones, incendios, vendavales, terremotos  y tormentas
+Inundaciones
+Incendio
+Sismo
+Lluvias
+Avalancha

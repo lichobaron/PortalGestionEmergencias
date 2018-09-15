@@ -1,245 +1,140 @@
 package javeriana.edu.co;
 
-import java.net.*;
-import java.io.*;
-import java.util.concurrent.*;
-import javafx.util.*;
-
-import javeriana.edu.co.Mensaje;
-import javeriana.edu.co.ClienteGestor;
-import javeriana.edu.co.TemaGestor;
-import javeriana.edu.co.FuenteGestor;
+import javeriana.edu.co.*;
 import java.util.Vector;
 
 
 class Gestor {
 
-	public static enum Tipo {
-		SUBSCLIE, SUBSFUEN, NOTICI
+	private Vector<ClienteGestor> clientes;
+	private Vector<TemaGestor> temas;
+	private Vector<TemaContextoGestor> infoContexto;
+	private Vector<FuenteGestor> fuentes;
+
+	Gestor(){
+		this.clientes = new Vector<ClienteGestor>();
+		this.temas = new Vector<TemaGestor>();
+		this.temas.add(new TemaGestor("Inundaciones"));
+		this.temas.add(new TemaGestor("Incendios"));
+		this.temas.add(new TemaGestor("Sismos"));
+		this.temas.add(new TemaGestor("Lluvias"));
+		this.temas.add(new TemaGestor("Avalanchas"));
+		this.fuentes = new Vector<FuenteGestor>();
+		this.infoContexto = new Vector<TemaContextoGestor>();
+		this.infoContexto.add(new TemaContextoGestor("edad"));
+		this.infoContexto.add(new TemaContextoGestor("residencia"));
+		this.infoContexto.add(new TemaContextoGestor("genero"));
+		this.infoContexto.add(new TemaContextoGestor("grupo etnico"));
+		this.findInfoContexto("residencia").addInfoContexto(new InfoContextoGestor("cachipay"));
 	}
-
-	private static ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesCliente;
-	private static ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesFuente;
-	private static ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaEnviodeMensajes;
-
-	public static Vector<ClienteGestor> clientes;
-	public static Vector<TemaGestor> temas;
-	public static Vector<FuenteGestor> fuentes;
 	
+	public Vector<ClienteGestor> getClientes() {
+		return this.clientes;
+	}
 
-	public static void main(String[] args) {
+	public Vector<FuenteGestor> getFuentes() {
+		return this.fuentes;
+	}
 
+	public Vector<TemaGestor> getTemas() {
+		return this.temas;
+	}
 
-		colaSubscripcionesCliente = new ConcurrentLinkedQueue<>(); 
-		colaSubscripcionesFuente = new ConcurrentLinkedQueue<>(); 
-		colaEnviodeMensajes = new ConcurrentLinkedQueue<>(); 
+	public Vector<TemaContextoGestor> getInfoContexto() {
+		return this.infoContexto;
+	}
 
-		clientes = new Vector<ClienteGestor>();
-		temas = new Vector<TemaGestor>();
-		fuentes = new Vector<FuenteGestor>();
+	public void setClientes(Vector<ClienteGestor> clientes) {
+		this.clientes = clientes;
+	}
 
-		ClienteThread clienteThread = new ClienteThread(colaSubscripcionesCliente);
-		FuenteThread fuenteThread = new FuenteThread(colaSubscripcionesFuente);
-		PublishMessageThread publishMessageThread = new PublishMessageThread(colaEnviodeMensajes);
+	public void setFuentes(Vector<FuenteGestor> fuentes) {
+		this.fuentes = fuentes;
+	}
 
-		clienteThread.start();
-		fuenteThread.start();
-		publishMessageThread.start();
+	public void setTemas(Vector<TemaGestor> temas) {
+		this.temas = temas;
+	}
 
-		try {
-			DatagramSocket serverSocket = new DatagramSocket(9876);
-			byte[] receiveData = new byte[1024];
-			while (true) {
+	public void setInfoContexto(Vector<TemaContextoGestor> infoContexto) {
+		this.infoContexto = infoContexto;
+	}
 
-				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-				serverSocket.receive(receivePacket);
-				InetAddress ipMensaje = receivePacket.getAddress();
-				int puertoMensaje = receivePacket.getPort();
-				byte[] data = receivePacket.getData();
-				ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(data));
-				Mensaje mensaje = (Mensaje)iStream.readObject();
-				Pair<InetAddress,Integer> t1= new Pair<>(ipMensaje,puertoMensaje);
-				Pair<Mensaje,Pair<InetAddress,Integer>> t2 = new Pair<>(mensaje,t1);
-				iStream.close();
-				
-				if (mensaje != null){
-					System.out.println(mensaje);
-					switch(mensaje.getTipo()) {
-						case SUBSCLIE:
-							System.out.println("Esperando subscripción cliente");
-							colaSubscripcionesCliente.add(t2);
-						   	break;
-						case SUBSFUEN:
-							System.out.println("Esperando subscripción fuente");
-							colaSubscripcionesFuente.add(t2);
-						   	break;
-						case NOTICI:
-							System.out.println("Esperando envío de noticias");
-							colaEnviodeMensajes.add(t2);
-						   	break;
-						default :
-							System.out.println("Mensaje inválido"); 
-						   	break;
-					}				
-				}
-				//Prueba Temas
-				/*for(TemaGestor c : temas){
-					System.out.println(c.toString());
-				}
-				//Prueba Fuente
-				for(FuenteGestor c : fuentes){
-					System.out.println(c.toString());
-				}
-				//Prueba Cliente
-				for(ClienteGestor c : clientes){
-					System.out.println(c.toString());
-				}*/
+	public void addCliente(ClienteGestor cliente){
+		this.clientes.add(cliente);
+	}
+
+	public void addFuente(FuenteGestor fuente){
+		this.fuentes.add(fuente);
+	}
+
+	public void addTema(TemaGestor tema){
+		this.temas.add(tema);
+	}
+
+	public boolean existCliente(String username){
+		int i = 0;
+		while(i<this.clientes.size()){
+			if(this.clientes.get(i).getNombreUsuario().equals(username)){
+				return true;
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println(e);
+			i++;
 		}
+		return false;
 	}
 
-}
-
-class ClienteThread extends Thread {
-
-	private ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesCliente;
-	private InetAddress ipCliente;
-	private int puertoCliente;
-
-	public ClienteThread(ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesCliente){
-		this.colaSubscripcionesCliente = colaSubscripcionesCliente;
-	}
-
-	public void run () {
-		
-		while(true){
-			if(colaSubscripcionesCliente.peek()!=null){
-				String errors = "";
-				boolean added = false;
-				Mensaje m = colaSubscripcionesCliente.peek().getKey();
-				this.ipCliente = colaSubscripcionesCliente.peek().getValue().getKey();
-				this.puertoCliente = colaSubscripcionesCliente.peek().getValue().getValue();
-				ClienteGestor c = new ClienteGestor(this.ipCliente,this.puertoCliente,m.getNombreUsuario());
-				Gestor.clientes.add(c);
-				for(String s : m.getTemas()){
-					added = false;
-					for(TemaGestor t : Gestor.temas){
-						if(t.getNombre().equals(s)){
-							boolean exist = false;
-							for(ClienteGestor u: t.getClientes()){
-								if(u.getNombreUsuario().equals(u.getNombreUsuario())){
-									exist = true;
-									break;
-								}		
-							}
-							if(!exist){
-								System.out.println("Entré");
-								t.addCliente(c);
-								added = true;
-								break;
-							}else{
-								errors += "El cliente ya se encuentra registrado con el tema "+ s+"\n";
-							}
-						}
-					}
-					if(!added){
-						TemaGestor tNuevo = new TemaGestor(s);
-						tNuevo.addCliente(c);
-						Gestor.temas.add(tNuevo);
-						break;
-					}	
-				}
-				if(errors == ""){
-					System.out.println("Subscripción cliente terminada!"); 
-				}else{
-					System.out.println(errors); 
-				}
-				colaSubscripcionesCliente.remove();
+	public boolean existFuente(String username){
+		int i = 0;
+		while(i<this.fuentes.size()){
+			if(this.fuentes.get(i).getNombreUsuario().equals(username)){
+				return true;
 			}
+			i++;
 		}
-	  	/*try {
-			while(true){
-				if(colaSubscripcionesCliente.peek()!=null){
-					sleep(1000);
-					System.out.println("Subscripción cliente terminada!"); 
-					colaSubscripcionesCliente.remove();
-				}
-			} 
-	  	} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.out.println(e);
-		}*/
-	}
-}
-
-class FuenteThread extends Thread {
-
-	private ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesFuente;
-	private InetAddress ipFuente;
-	private int puertoFuente;
-
-	public FuenteThread(ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesFuente){
-		this.colaSubscripcionesFuente = colaSubscripcionesFuente;
+		return false;
 	}
 
-	public void run () {
-		while(true){
-			if(colaSubscripcionesFuente.peek()!=null){
-				Mensaje m = colaSubscripcionesFuente.peek().getKey();
-				this.ipFuente = colaSubscripcionesFuente.peek().getValue().getKey();
-				this.puertoFuente = colaSubscripcionesFuente.peek().getValue().getValue();
-				FuenteGestor f = new FuenteGestor(this.ipFuente,this.puertoFuente,m.getNombreUsuario());
-				Gestor.fuentes.add(f);	
-				System.out.println("Subscripción fuente terminada!");
-				colaSubscripcionesFuente.remove();
+	public boolean existTema(String tema){
+		int i = 0;
+		while(i<this.temas.size()){
+			if(this.temas.get(i).getNombre().equals(tema)){
+				return true;
 			}
-		} 
-		/*
-		try {
-			while(true){
-				if(colaSubscripcionesFuente.peek()!=null){
-					System.out.println("Subscripción fuente terminada!");
-					colaSubscripcionesFuente.remove();
-				}
-			} 
-	  	} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.out.println(e);
+			i++;
 		}
-		*/
-	}
-}
-
-class PublishMessageThread extends Thread {
-
-	private ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaEnviodeMensajes;
-
-	public PublishMessageThread(ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaEnviodeMensajes){
-		this.colaEnviodeMensajes = colaEnviodeMensajes;
+		return false;
 	}
 
-	public void run () {
-		while(true){
-			if(colaEnviodeMensajes.peek()!=null){
-				System.out.println("Envío de mensajes terminado!"); 
-				colaEnviodeMensajes.remove();
+	public TemaGestor findTema(String tema){
+		int i = 0;
+		while(i<this.temas.size()){
+			if(this.temas.get(i).getNombre().equals(tema)){
+				return this.temas.get(i);
 			}
-		} 
-		/*
-		try {
-			while(true){
-				if(colaEnviodeMensajes.peek()!=null){
-					System.out.println("Envío de mensajes terminado!"); 
-					colaEnviodeMensajes.remove();
-				}
-			} 
-	  	} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.out.println(e);
+			i++;
 		}
-		*/
+		return null;
+	}
+
+	public boolean existInfoContexto(String infoContexto){
+		int i = 0;
+		while(i<this.infoContexto.size()){
+			if(this.infoContexto.get(i).getNombre().equals(infoContexto)){
+				return true;
+			}
+			i++;
+		}
+		return false;
+    }
+    
+    public TemaContextoGestor findInfoContexto(String infoContexto){
+		int i = 0;
+		while(i<this.infoContexto.size()){
+			if(this.infoContexto.get(i).getNombre().equals(infoContexto)){
+				return this.infoContexto.get(i);
+			}
+			i++;
+		}
+		return null;
 	}
 }

@@ -9,7 +9,10 @@ class Cliente {
 	public static void main(String[] args) {
 		Mensaje prueba = new Mensaje(Mensaje.Tipo.SUBSCLIE, "Holi", "kokoloko4");
 		prueba.addTema("Inundaciones");
+		prueba.addInfoContext("residencia:cachipay");
+		prueba.addInfoContext("edad:18");
 		System.out.println(prueba);
+		byte[] receiveData = new byte[1024];
 		try {
 			DatagramSocket clientSocket = new DatagramSocket();       
 			InetAddress IPAddress = InetAddress.getByName("localhost");       			
@@ -19,10 +22,23 @@ class Cliente {
 			sendData.close();
 			byte[] serializedMessage = bStream.toByteArray();
 			DatagramPacket sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, 9876);
-			clientSocket.send(sendPacket);            	
+			clientSocket.send(sendPacket);
+			System.out.println("Mensaje enviado");
+			while (true) {
+				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+				clientSocket.receive(receivePacket);
+				InetAddress ipMensaje = receivePacket.getAddress();
+				int puertoMensaje = receivePacket.getPort();
+				byte[] data = receivePacket.getData();
+				ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(data));
+				Mensaje mensaje = (Mensaje)iStream.readObject();
+				iStream.close();
+				System.out.println(mensaje.toString());
+			}
+          	
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println(e); 
+			System.out.println(e);
 		}
 	}
 }
