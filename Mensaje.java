@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 class Mensaje implements Serializable {
 	public static enum Tipo {
-		SUBSCLIE, SUBSFUEN, NOTICI
+		SUBSCLIE, SUBSFUEN, NOTICI, UPT, ERROR, TEMAS
 	}
 
 	private Tipo tipo;
@@ -55,6 +55,14 @@ class Mensaje implements Serializable {
 		this.nombreUsuario = nombreUsuario;
 	}
 
+	public List<String> getInfoContext() {
+		return infoContext;
+	}
+
+	public void setInfoContext(List<String> infoContext) {
+		this.infoContext = infoContext;
+	}
+
 	public void addTema(String tema) {
 		this.temas.add(tema);
 	}
@@ -73,8 +81,8 @@ class Mensaje implements Serializable {
 				break;
 
 			case SUBSFUEN:
-				string = String.format("tipo: subscricion fuente; nombreUsuario: %s; tema: %s; " +
-					"%s cuerpo: %s", this.nombreUsuario, this.temas.get(0), this.infoContext.get(0), this.cuerpo);
+				string = String.format("tipo: subscricion fuente; nombreUsuario: %s; " +
+					"cuerpo: %s", this.nombreUsuario, this.cuerpo);
 				break;
 
 			case NOTICI:
