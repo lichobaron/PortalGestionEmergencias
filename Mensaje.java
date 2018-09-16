@@ -3,6 +3,7 @@ package javeriana.edu.co;
 import java.util.List;
 import java.util.Vector;
 import java.io.Serializable;
+import java.net.InetAddress;
 
 class Mensaje implements Serializable {
 	public static enum Tipo {
@@ -14,6 +15,8 @@ class Mensaje implements Serializable {
 	private List<String> infoContext;
 	private String cuerpo;
 	private String nombreUsuario;
+	private InetAddress ip;
+	private Integer puerto;
 
 	Mensaje(Tipo tipo, String cuerpo, String nombreUsuario) {
 		this.tipo = tipo;
@@ -21,14 +24,6 @@ class Mensaje implements Serializable {
 		this.infoContext = new Vector<String>();
 		this.cuerpo = cuerpo;
 		this.nombreUsuario = nombreUsuario;
-	}
-
-	Mensaje(Tipo tipo, String cuerpo) {
-		this.tipo = tipo;
-		this.temas = null;
-		this.infoContext = null;
-		this.cuerpo = cuerpo;
-		this.nombreUsuario = null;
 	}
 
 	public Tipo getTipo() {
@@ -79,6 +74,22 @@ class Mensaje implements Serializable {
 		this.infoContext.add(infoContext);
 	}
 
+	public InetAddress getIp() {
+		return ip;
+	}
+
+	public void setIp(InetAddress ip) {
+		this.ip = ip;
+	}
+
+	public Integer getPuerto() {
+		return puerto;
+	}
+
+	public void setPuerto(Integer puerto) {
+		this.puerto = puerto;
+	}
+
 	public String toString() {
 		String string = null;
 
@@ -94,16 +105,16 @@ class Mensaje implements Serializable {
 				break;
 
 			case NOTICI:
-				string = String.format("tipo: noticia; tema: %s; infoContext: %s;" +
-					"Usuario: %s cuerpo: %s", this.temas, this.infoContext, this.nombreUsuario, this.cuerpo);
+				string = String.format("tipo: subscricion noticia; tema: %s; " +
+					"cuerpo: %s", this.temas.get(0), this.cuerpo);
 				break;
-
-			case UPT:
-				string = "tipo: UPT";
+			case TEMAS:
+				string = String.format("tipo: temas disponibles; tema: %s; " +
+				"cuerpo: %s", this.temas.toString(), this.cuerpo);
 				break;
-
 			case ERROR:
-				string = String.format("tipo: Error; cuerpo: %s", this.cuerpo);
+				string = String.format("tipo:  error; " +
+				"cuerpo: %s", this.cuerpo);
 				break;
 		}
 
