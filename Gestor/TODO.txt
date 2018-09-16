@@ -7,7 +7,7 @@ enviar mensajes de error al cliente - ya
     temas e info de contexto que exista
     registro fuente
     fuente info contexto valida
-broker distribuido 
+broker distribuido
 guardar noticias
 
 

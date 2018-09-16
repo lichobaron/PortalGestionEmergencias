@@ -12,10 +12,16 @@ class FuenteThread extends Thread {
 
 	private ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesFuente;
 	private Gestor gestor;
+	private int modo;
 
-	public FuenteThread(Gestor gestor, ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesFuente){
+	public FuenteThread(Gestor gestor, ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesFuente, int modo){
 		this.colaSubscripcionesFuente = colaSubscripcionesFuente;
 		this.gestor = gestor;
+		this.modo = modo;
+	}
+
+	public void setModo(int modo) {
+		this.modo = modo;
 	}
 
 	public void run () {
@@ -27,6 +33,12 @@ class FuenteThread extends Thread {
 
 		while(true){
 			if(colaSubscripcionesFuente.peek()!=null){
+				for(Pair<InetAddress,Integer> b: gestor.getBackups()){
+					Mensaje mc = colaSubscripcionesFuente.peek().getKey();
+					mc.setIp(colaSubscripcionesFuente.peek().getValue().getKey());
+					mc.setPuerto(colaSubscripcionesFuente.peek().getValue().getValue());
+					this.sendMessage(mc, b.getKey(), b.getValue());
+				}
 				m = colaSubscripcionesFuente.peek().getKey();
 				fuenteGestor = gestor.findFuente(m.getNombreUsuario());
 				if(fuenteGestor==null){
@@ -46,4 +58,19 @@ class FuenteThread extends Thread {
 			}
 		}
 	}
+	private void sendMessage(Mensaje mensaje, InetAddress IPAddress, int port){
+        try {
+            DatagramSocket clientSocket = new DatagramSocket();
+            ByteArrayOutputStream bStream  = new ByteArrayOutputStream();
+            ObjectOutput sendData = new ObjectOutputStream(bStream);
+            sendData.writeObject(mensaje);
+            sendData.close();
+            byte[] serializedMessage = bStream.toByteArray();;
+            DatagramPacket sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, port);
+            clientSocket.send(sendPacket);
+            clientSocket.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 }

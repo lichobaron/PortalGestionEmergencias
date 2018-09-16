@@ -3,6 +3,7 @@ package javeriana.edu.co;
 import java.util.List;
 import java.util.Vector;
 import java.io.Serializable;
+import java.net.InetAddress;
 
 class Mensaje implements Serializable {
 	public static enum Tipo {
@@ -14,6 +15,8 @@ class Mensaje implements Serializable {
 	private List<String> infoContext;
 	private String cuerpo;
 	private String nombreUsuario;
+	private InetAddress ip;
+	private Integer puerto;
 
 	Mensaje(Tipo tipo, String cuerpo, String nombreUsuario) {
 		this.tipo = tipo;
@@ -69,6 +72,22 @@ class Mensaje implements Serializable {
 
 	public void addInfoContext(String infoContext) {
 		this.infoContext.add(infoContext);
+	}
+
+	public InetAddress getIp() {
+		return ip;
+	}
+
+	public void setIp(InetAddress ip) {
+		this.ip = ip;
+	}
+
+	public Integer getPuerto() {
+		return puerto;
+	}
+
+	public void setPuerto(Integer puerto) {
+		this.puerto = puerto;
 	}
 
 	public String toString() {

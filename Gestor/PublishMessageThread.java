@@ -14,13 +14,19 @@ class PublishMessageThread extends Thread {
     private Gestor gestor;
     private DatagramSocket serverSocket;
     private Vector<ClienteGestor> clientesEnviados;
+    private int modo;
 
-	public PublishMessageThread(Gestor gestor, ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaEnviodeMensajes, DatagramSocket serverSocket){
+	public PublishMessageThread(Gestor gestor, ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaEnviodeMensajes, DatagramSocket serverSocket, int modo){
 		this.colaEnviodeMensajes = colaEnviodeMensajes;
         this.gestor = gestor;
         this.serverSocket = serverSocket;
         this.clientesEnviados = new Vector<ClienteGestor>();
-	}
+        this.modo = modo;
+    }
+    
+    public void setModo(int modo) {
+        this.modo = modo;
+    }
 
 	public void run () {
 
@@ -28,24 +34,34 @@ class PublishMessageThread extends Thread {
 
 		while(true){
 			if(colaEnviodeMensajes.peek()!=null){
+                for(Pair<InetAddress,Integer> b: gestor.getBackups()){
+					Mensaje mc = colaEnviodeMensajes.peek().getKey();
+					mc.setIp(colaEnviodeMensajes.peek().getValue().getKey());
+					mc.setPuerto(colaEnviodeMensajes.peek().getValue().getValue());
+					this.sendMessage(mc, b.getKey(), b.getValue());
+				}
                 m = colaEnviodeMensajes.peek().getKey();
                 InetAddress ipFuente= colaEnviodeMensajes.peek().getValue().getKey();
 				int puertoFuente = colaEnviodeMensajes.peek().getValue().getValue();
                 if(gestor.existFuente(m.getNombreUsuario())){
+                    gestor.findFuente(m.getNombreUsuario()).addNoticia(m);
+                    System.out.println("Noticia de "+m.getNombreUsuario()+" guardada.");
                     m.setNombreUsuario("");
                     for(String temaFuente: m.getTemas()){
                         TemaGestor temaGestor = gestor.findTema(temaFuente);
                         if(temaGestor!=null){
-                            for(ClienteGestor cliente: temaGestor.getClientes()){
-                                try {
-                                    if(!this.existCliente(cliente.getNombreUsuario())){
-                                        sendMessage(m, cliente.getIp(),cliente.getPuerto() );
-                                        clientesEnviados.add(cliente);
-                                        System.out.println("Se ha enviado al cliente "+ cliente.getNombreUsuario()+ "una noticia de "+ temaFuente);
-                                    }       	
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    System.out.println(e); 
+                            if(modo==1){
+                                for(ClienteGestor cliente: temaGestor.getClientes()){
+                                    try {
+                                        if(!this.existCliente(cliente.getNombreUsuario())){
+                                            sendMessage(m, cliente.getIp(),cliente.getPuerto() );
+                                            clientesEnviados.add(cliente);
+                                            System.out.println("Se ha enviado al cliente "+ cliente.getNombreUsuario()+ "una noticia de "+ temaFuente);
+                                        }       	
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        System.out.println(e); 
+                                    }
                                 }
                             }
                         }
@@ -74,16 +90,18 @@ class PublishMessageThread extends Thread {
                         if(tcg!=null){
                             InfoContextoGestor icg = tcg.findInfoContexto(data);
                             if(icg!=null){
-                                for(ClienteGestor cliente: icg.getClientes()){
-                                    try {
-                                        if(!this.existCliente(cliente.getNombreUsuario())){
-                                            sendMessage(m, cliente.getIp(),cliente.getPuerto() );
-                                            clientesEnviados.add(cliente);
-                                            System.out.println("Se ha enviado al cliente "+ cliente.getNombreUsuario()+ " una noticia de "+ data);
-                                        }      	
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        System.out.println(e); 
+                                if (modo == 1){
+                                    for(ClienteGestor cliente: icg.getClientes()){
+                                        try {
+                                            if(!this.existCliente(cliente.getNombreUsuario())){
+                                                sendMessage(m, cliente.getIp(),cliente.getPuerto() );
+                                                clientesEnviados.add(cliente);
+                                                System.out.println("Se ha enviado al cliente "+ cliente.getNombreUsuario()+ " una noticia de "+ data);
+                                            }      	
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            System.out.println(e); 
+                                        }
                                     }
                                 }
                             }
@@ -93,15 +111,19 @@ class PublishMessageThread extends Thread {
                             }
                         }
                         else{
-                            Mensaje me = new Mensaje(Mensaje.Tipo.ERROR, "La categoría de contexto "+ict+" no es valida", "El gestor");
-							sendMessage(me, ipFuente, puertoFuente);
+                            if(modo == 1){
+                                Mensaje me = new Mensaje(Mensaje.Tipo.ERROR, "La categoría de contexto "+ict+" no es valida", "El gestor");
+                                sendMessage(me, ipFuente, puertoFuente);
+                            }
                             System.out.println("La categoría de contexto "+ict+ " no es válida");
                         }                                             
                     }
                 }
                 else{
-                    Mensaje me = new Mensaje(Mensaje.Tipo.ERROR, "La fuente "+ m.getNombreUsuario()+" no se encuentra registrada.", "El gestor");
-                    sendMessage(me, ipFuente, puertoFuente);
+                    if(modo==1){
+                        Mensaje me = new Mensaje(Mensaje.Tipo.ERROR, "La fuente "+ m.getNombreUsuario()+" no se encuentra registrada.", "El gestor");
+                        sendMessage(me, ipFuente, puertoFuente);
+                    }
                     System.out.println("La fuente "+ m.getNombreUsuario()+" no se encuentra registrada.");
                 }
 				System.out.println("Envío de mensajes terminado!"); 
@@ -109,19 +131,6 @@ class PublishMessageThread extends Thread {
                 clientesEnviados.clear();
 			}
 		} 
-		/*
-		try {
-			while(true){
-				if(colaEnviodeMensajes.peek()!=null){
-					System.out.println("Envío de mensajes terminado!"); 
-					colaEnviodeMensajes.remove();
-				}
-			} 
-	  	} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.out.println(e);
-		}
-		*/
     }
     
     private boolean existCliente(String username){

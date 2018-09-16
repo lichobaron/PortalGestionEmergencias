@@ -10,7 +10,7 @@ class Fuente {
 		Mensaje prueba = new Mensaje(Mensaje.Tipo.SUBSFUEN, "Holi","SoyFuente");
 		Mensaje prueba2 = new Mensaje(Mensaje.Tipo.NOTICI, "Holi","SoyFuente");
 		prueba2.addTema("Incendios");
-		prueba2.addInfoContext("residencia:cachipay");
+		prueba2.addInfoContext("residenciaa:cachipay");
 		prueba2.addInfoContext("edad:18");
 		System.out.println(prueba);
 		System.out.println(prueba2);

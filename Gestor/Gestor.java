@@ -1,8 +1,10 @@
 package javeriana.edu.co;
 
 import javeriana.edu.co.*;
-import java.util.Vector;
 
+import java.net.InetAddress;
+import java.util.Vector;
+import javafx.util.Pair; 
 
 class Gestor {
 
@@ -10,6 +12,7 @@ class Gestor {
 	private Vector<TemaGestor> temas;
 	private Vector<TemaContextoGestor> infoContexto;
 	private Vector<FuenteGestor> fuentes;
+	private Vector<Pair<InetAddress,Integer>> backups;
 
 	Gestor(){
 		this.clientes = new Vector<ClienteGestor>();
@@ -26,6 +29,7 @@ class Gestor {
 		this.infoContexto.add(new TemaContextoGestor("genero"));
 		this.infoContexto.add(new TemaContextoGestor("grupo etnico"));
 		this.findInfoContexto("residencia").addInfoContexto(new InfoContextoGestor("cachipay"));
+		this.backups = new Vector<Pair<InetAddress,Integer>>();
 	}
 	
 	public Vector<ClienteGestor> getClientes() {
@@ -44,6 +48,10 @@ class Gestor {
 		return this.infoContexto;
 	}
 
+	public Vector<Pair<InetAddress, Integer>> getBackups() {
+		return backups;
+	}
+
 	public void setClientes(Vector<ClienteGestor> clientes) {
 		this.clientes = clientes;
 	}
@@ -60,6 +68,10 @@ class Gestor {
 		this.infoContexto = infoContexto;
 	}
 
+	public void setBackups(Vector<Pair<InetAddress, Integer>> backups) {
+		this.backups = backups;
+	}
+
 	public void addCliente(ClienteGestor cliente){
 		this.clientes.add(cliente);
 	}
@@ -70,6 +82,14 @@ class Gestor {
 
 	public void addTema(TemaGestor tema){
 		this.temas.add(tema);
+	}
+
+	public void addBackup(String baddress, Integer bport){
+		try {
+			this.backups.add( new Pair<>(InetAddress.getByName(baddress),bport));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 
 	public boolean existCliente(String username){

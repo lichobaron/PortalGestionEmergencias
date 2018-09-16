@@ -12,10 +12,16 @@ class ClienteThread extends Thread {
 
 	private Gestor gestor;
 	private ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesCliente;
+	private int modo;
 
-	public ClienteThread(Gestor gestor, ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesCliente){
+	public ClienteThread(Gestor gestor, ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesCliente, int modo){
 		this.gestor = gestor;
 		this.colaSubscripcionesCliente = colaSubscripcionesCliente;
+		this.modo = modo;
+	}
+
+	public void setModo(int modo) {
+		this.modo = modo;
 	}
 
 	public void run () {
@@ -26,7 +32,12 @@ class ClienteThread extends Thread {
 
 		while(true){
 			if(colaSubscripcionesCliente.peek()!=null){
-
+				for(Pair<InetAddress,Integer> b: gestor.getBackups()){
+					Mensaje mc = colaSubscripcionesCliente.peek().getKey();
+					mc.setIp(colaSubscripcionesCliente.peek().getValue().getKey());
+					mc.setPuerto(colaSubscripcionesCliente.peek().getValue().getValue());
+					this.sendMessage(mc, b.getKey(), b.getValue());
+				}
 				m = colaSubscripcionesCliente.peek().getKey();
 				ClienteGestor clienteGestor = gestor.findCliente(m.getNombreUsuario());
 				if(clienteGestor==null){
@@ -42,9 +53,11 @@ class ClienteThread extends Thread {
 							System.out.println("El tema "+ t + "ha sido registrado al cliente "+ c.getNombreUsuario());
 						}
 						else{
+							if(modo==1){
+								Mensaje me = new Mensaje(Mensaje.Tipo.ERROR, "El tema "+t+" del cliente "+c.getNombreUsuario()+ " no existe.", "El gestor");
+								sendMessage(me, ipCliente, puertoCliente);
+							}
 							System.out.println("El tema "+t+" del cliente "+c.getNombreUsuario()+ " no existe.");
-							Mensaje me = new Mensaje(Mensaje.Tipo.ERROR, "El tema "+t+" del cliente "+c.getNombreUsuario()+ " no existe.", "El gestor");
-							sendMessage(me, ipCliente, puertoCliente);
 						}
 					}
 					for(String ic: m.getInfoContext()){
@@ -76,12 +89,13 @@ class ClienteThread extends Thread {
 							System.out.println("El tema de contexto "+ data +" con categoría "+ict+" ha sido registrado al cliente "+ c.getNombreUsuario());
 						}
 						else{
-							Mensaje me = new Mensaje(Mensaje.Tipo.ERROR,"Categoría de contexto "+ict+" inválida.", "El gestor");
-							sendMessage(me, ipCliente, puertoCliente);
+							if(modo==1){
+								Mensaje me = new Mensaje(Mensaje.Tipo.ERROR,"Categoría de contexto "+ict+" inválida.", "El gestor");
+								sendMessage(me, ipCliente, puertoCliente);
+							}
 							System.out.println("Categoría de contexto "+ict+" inválida.");
 						}
 					}
-
 					System.out.println("Subscripción cliente terminada!"); 
 				}
 				else{
