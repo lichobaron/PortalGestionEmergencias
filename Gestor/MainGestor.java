@@ -10,7 +10,7 @@ import java.util.TimerTask;
 import javeriana.edu.co.*;
 import java.util.Vector;
 
-
+@SuppressWarnings("deprecation")
 class MainGestor {
 
 	public static void main(String[] args) {
@@ -25,19 +25,22 @@ class MainGestor {
             String opc = System.console().readLine();
             String ipi;
             String pi;
-            if(opc=="s\n"){
-                System.out.println("Digite ip:");
+            if(opc.equals("s")){
+                System.out.println("Digite ip del broker asociado:");
                 ipi = System.console().readLine();
-                System.out.println("Digite puerto:");
+                System.out.println("Digite puerto del broker asociado:");
                 pi = System.console().readLine();
                 gestor.addBackup(ipi, Integer.parseInt(pi));
             }
-            System.out.print("Digite el tamaño maximo de cola");
+            System.out.println("Digite su puerto:");
+            input = System.console().readLine();
+            int gestorPort = Integer.parseInt(input);
+            System.out.println("Digite el tamaño maximo de cola:");
             input = System.console().readLine();
             int tamMax = Integer.parseInt(input);
             System.out.println(modo+"  " +tamMax);
             
-			DatagramSocket serverSocket = new DatagramSocket(6785);
+			DatagramSocket serverSocket = new DatagramSocket(gestorPort);
             byte[] receiveData = new byte[1024];
             ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesCliente = new ConcurrentLinkedQueue<>(); 
 			ConcurrentLinkedQueue<Pair<Mensaje,Pair<InetAddress,Integer>>> colaSubscripcionesFuente = new ConcurrentLinkedQueue<>(); 
@@ -48,8 +51,8 @@ class MainGestor {
 			FuenteThread fuenteThread = new FuenteThread(gestor, colaSubscripcionesFuente, modo);
 			PublishMessageThread publishMessageThread = new PublishMessageThread(gestor, colaEnviodeMensajes, serverSocket, modo);
             TopicsThread topicsThread = new TopicsThread(gestor, colaEnvioTemasDisponibles, serverSocket);
-            TimeOutThread timeOutThread = new TimeOutThread(gestor,modo,InetAddress.getByName("localhost"),6785);
-            ControlThread controlThread = new ControlThread(gestor,modo,InetAddress.getByName("localhost"),6785);
+            TimeOutThread timeOutThread = new TimeOutThread(gestor,modo,InetAddress.getByName("localhost"),gestorPort);
+            ControlThread controlThread = new ControlThread(gestor,modo,InetAddress.getByName("localhost"),gestorPort);
 
 			clienteThread.start();
 			fuenteThread.start();
@@ -104,15 +107,16 @@ class MainGestor {
                                 for(FuenteGestor fuent: gestor.getFuentes()){
                                     sendMessage(new Mensaje(Mensaje.Tipo.UPT,"",""),fuent.getIp(), fuent.getPuerto());
                                 }
+                                controlThread.stop();
                                 timeOutThread.start();
                                 break;
                             case ERROR:
                                 elapsedTime = System.currentTimeMillis() - startTime;
                                 startTime = System.currentTimeMillis();
-                                System.out.println(elapsedTime);
+                                System.out.println(elapsedTime/1000);
                                 break;
                             default :
-                                System.out.println("Mensaje inválido"); 
+                                System.out.println("Mensaje inválido - Gestor Backup"); 
                                 break;
                         }
                         if(elapsedTime / 1000 > 5){
@@ -123,7 +127,8 @@ class MainGestor {
                             for(FuenteGestor fuent: gestor.getFuentes()){
                                 sendMessage(new Mensaje(Mensaje.Tipo.UPT,"",""),fuent.getIp(), fuent.getPuerto());
                             }
-                            timeOutThread.start();
+                            controlThread.stop();
+                            timeOutThread.start();                            
                         }				
                     }
                 }
@@ -150,7 +155,7 @@ class MainGestor {
                                 colaEnvioTemasDisponibles.add(t2);
                                 break;
                             default :
-                                System.out.println("Mensaje inválido"); 
+                                System.out.println("Mensaje inválido - Gestor Normal"); 
                                 break;
                         }				
                     }
@@ -158,7 +163,7 @@ class MainGestor {
                         ||colaSubscripcionesCliente.size()>=tamMax||colaEnviodeMensajes.size()>=tamMax){
                             if(gestor.getBackups().size()>=1){
                                 sendMessage(new Mensaje(Mensaje.Tipo.UPT,"",""),gestor.getBackups().get(0).getKey(), gestor.getBackups().get(0).getValue());
-                                timeOutThread.interrupt();
+                                timeOutThread.stop();
                             }
                             else{
                                 System.out.println("No hay backups!");

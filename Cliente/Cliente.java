@@ -22,7 +22,7 @@ class Cliente {
 			sendData.writeObject(prueba);
 			sendData.close();
 			byte[] serializedMessage = bStream.toByteArray();
-			DatagramPacket sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, 9876);
+			DatagramPacket sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, 6745);
 			clientSocket.send(sendPacket);
 			System.out.println("Mensaje enviado");
           			
@@ -31,7 +31,7 @@ class Cliente {
 			sendData.writeObject(prueba2);
 			sendData.close();
 			serializedMessage = bStream.toByteArray();
-			sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, 9876);
+			sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, 6745);
 			clientSocket.send(sendPacket);
 			System.out.println("Mensaje2 enviado");
 
