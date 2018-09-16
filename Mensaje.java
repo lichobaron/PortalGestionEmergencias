@@ -26,6 +26,14 @@ class Mensaje implements Serializable {
 		this.nombreUsuario = nombreUsuario;
 	}
 
+	Mensaje(Tipo tipo, String cuerpo) {
+		this.tipo = tipo;
+		this.temas = null;
+		this.infoContext = null;
+		this.cuerpo = cuerpo;
+		this.nombreUsuario = null;
+	}
+
 	public Tipo getTipo() {
 		return this.tipo;
 	}
