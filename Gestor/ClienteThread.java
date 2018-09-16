@@ -39,13 +39,13 @@ class ClienteThread extends Thread {
 						TemaGestor tg = gestor.findTema(t);
 						if(tg!=null){
 							tg.addCliente(c);
+							System.out.println("El tema "+ t + "ha sido registrado al cliente "+ c.getNombreUsuario());
 						}
 						else{
-							TemaGestor tNuevo = new TemaGestor(t);
-							tNuevo.addCliente(c);
-							gestor.addTema(tNuevo);
+							System.out.println("El tema "+t+" del cliente "+c.getNombreUsuario()+ " no existe.");
+							Mensaje me = new Mensaje(Mensaje.Tipo.ERROR, "El tema "+t+" del cliente "+c.getNombreUsuario()+ " no existe.", "El gestor");
+							sendMessage(me, ipCliente, puertoCliente);
 						}
-						System.out.println("El tema "+ t + "ha sido registrado al cliente "+ c.getNombreUsuario());
 					}
 					for(String ic: m.getInfoContext()){
 						String ict = "";
@@ -76,7 +76,9 @@ class ClienteThread extends Thread {
 							System.out.println("El tema de contexto "+ data +" con categoría "+ict+" ha sido registrado al cliente "+ c.getNombreUsuario());
 						}
 						else{
-							System.out.println("Categoría de contexto inválida.");
+							Mensaje me = new Mensaje(Mensaje.Tipo.ERROR,"Categoría de contexto "+ict+" inválida.", "El gestor");
+							sendMessage(me, ipCliente, puertoCliente);
+							System.out.println("Categoría de contexto "+ict+" inválida.");
 						}
 					}
 
@@ -90,17 +92,20 @@ class ClienteThread extends Thread {
 				colaSubscripcionesCliente.remove();
 			}
 		}
-	  	/*try {
-			while(true){
-				if(colaSubscripcionesCliente.peek()!=null){
-					sleep(1000);
-					System.out.println("Subscripción cliente terminada!"); 
-					colaSubscripcionesCliente.remove();
-				}
-			} 
-	  	} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.out.println(e);
-		}*/
 	}
+	private void sendMessage(Mensaje mensaje, InetAddress IPAddress, int port){
+        try {
+            DatagramSocket clientSocket = new DatagramSocket();
+            ByteArrayOutputStream bStream  = new ByteArrayOutputStream();
+            ObjectOutput sendData = new ObjectOutputStream(bStream);
+            sendData.writeObject(mensaje);
+            sendData.close();
+            byte[] serializedMessage = bStream.toByteArray();;
+            DatagramPacket sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, port);
+            clientSocket.send(sendPacket);
+            clientSocket.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 }

@@ -14,6 +14,7 @@ class Fuente {
 		prueba2.addInfoContext("edad:18");
 		System.out.println(prueba);
 		System.out.println(prueba2);
+		byte[] receiveData = new byte[1024];
 		try {
 			DatagramSocket clientSocket = new DatagramSocket();       
 			InetAddress IPAddress = InetAddress.getByName("localhost");       			
@@ -31,7 +32,18 @@ class Fuente {
 			sendData.close();
 			serializedMessage = bStream.toByteArray();
 			sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, 9876);
-			clientSocket.send(sendPacket);   
+			clientSocket.send(sendPacket);
+			while (true) {
+				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+				clientSocket.receive(receivePacket);
+				InetAddress ipMensaje = receivePacket.getAddress();
+				int puertoMensaje = receivePacket.getPort();
+				byte[] data = receivePacket.getData();
+				ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(data));
+				Mensaje mensaje = (Mensaje)iStream.readObject();
+				iStream.close();
+				System.out.println(mensaje.toString());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(e); 

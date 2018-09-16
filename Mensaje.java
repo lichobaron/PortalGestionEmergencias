@@ -93,6 +93,10 @@ class Mensaje implements Serializable {
 				string = String.format("tipo: temas disponibles; tema: %s; " +
 				"cuerpo: %s", this.temas.toString(), this.cuerpo);
 				break;
+			case ERROR:
+				string = String.format("tipo:  error; " +
+				"cuerpo: %s", this.cuerpo);
+				break;
 		}
 
 		return string;

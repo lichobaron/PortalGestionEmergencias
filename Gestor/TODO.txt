@@ -3,12 +3,11 @@ publish mensaje - ya
 prueba publish - ya
 si un cliente se vuelve a conectar actualizar ip y puerto - ya
 enviar temas cliente - ya
-enviar mensajes de error al cliente
-    registro cliente en temas
+enviar mensajes de error al cliente - ya
     temas e info de contexto que exista
     registro fuente
     fuente info contexto valida
-broker distribuido
+broker distribuido 
 guardar noticias
 
 

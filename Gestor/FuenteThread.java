@@ -44,19 +44,6 @@ class FuenteThread extends Thread {
 				System.out.println("Subscripción fuente terminada!");
 				colaSubscripcionesFuente.remove();
 			}
-		} 
-		/*
-		try {
-			while(true){
-				if(colaSubscripcionesFuente.peek()!=null){
-					System.out.println("Subscripción fuente terminada!");
-					colaSubscripcionesFuente.remove();
-				}
-			} 
-	  	} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.out.println(e);
 		}
-		*/
 	}
 }

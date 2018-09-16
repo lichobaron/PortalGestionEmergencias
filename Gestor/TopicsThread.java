@@ -49,23 +49,10 @@ class TopicsThread extends Thread {
                     IPAddress = clienteGestor.getIp();
                     puerto = clienteGestor.getPuerto();
                 }
-                try {
-                    clientSocket = new DatagramSocket();          			
-                    bStream = new ByteArrayOutputStream();
-                    sendData = new ObjectOutputStream(bStream);
-                    m.setTipo(Mensaje.Tipo.TEMAS);
-                    m.setTemas(this.getTemas());
-                    m.setNombreUsuario("El gestor");
-                    sendData.writeObject(m);
-                    sendData.close();
-                    serializedMessage = bStream.toByteArray();
-                    sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, puerto);
-                    clientSocket.send(sendPacket);
-                    
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println(e); 
-                }
+                m.setTipo(Mensaje.Tipo.TEMAS);
+                m.setTemas(this.getTemas());
+                m.setNombreUsuario("El gestor");
+                sendMessage(m, IPAddress, puerto);
                 if(clienteGestor==null){
                     System.out.println("Se ha enviado al cliente sin registrar la lista de temas.");					
 				}
@@ -75,20 +62,7 @@ class TopicsThread extends Thread {
 				System.out.println("Envio de temas terminado!");
 				colaEnvioTemasDisponibles.remove();
 			}
-		} 
-		/*
-		try {
-			while(true){
-				if(colaSubscripcionesFuente.peek()!=null){
-					System.out.println("Subscripción fuente terminada!");
-					colaSubscripcionesFuente.remove();
-				}
-			} 
-	  	} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.out.println(e);
-		}
-		*/
+        }
     }
     
     private List<String> getTemas(){
@@ -97,5 +71,21 @@ class TopicsThread extends Thread {
             retorno.add(tema.getNombre());
         }
         return retorno;
+    }
+
+    private void sendMessage(Mensaje mensaje, InetAddress IPAddress, int port){
+        try {
+            DatagramSocket clientSocket = new DatagramSocket();
+            ByteArrayOutputStream bStream  = new ByteArrayOutputStream();
+            ObjectOutput sendData = new ObjectOutputStream(bStream);
+            sendData.writeObject(mensaje);
+            sendData.close();
+            byte[] serializedMessage = bStream.toByteArray();;
+            DatagramPacket sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, port);
+            clientSocket.send(sendPacket);
+            clientSocket.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
