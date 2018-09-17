@@ -2,8 +2,9 @@ package javeriana.edu.co;
 
 import javeriana.edu.co.*;
 import java.util.Vector;
+import java.io.Serializable;
 
-class TemaContextoGestor{
+class TemaContextoGestor implements Serializable{
     private String nombre;
     private Vector<InfoContextoGestor> datos;
 

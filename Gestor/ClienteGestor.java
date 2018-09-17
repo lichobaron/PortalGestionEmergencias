@@ -4,7 +4,9 @@ import java.net.*;
 import java.io.*;
 import java.util.concurrent.*;
 
-class ClienteGestor {
+import java.io.Serializable;
+
+class ClienteGestor implements Serializable {
     
     private InetAddress ip;
     private int puerto;

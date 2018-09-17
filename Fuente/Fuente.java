@@ -18,13 +18,13 @@ import javeriana.edu.co.Mensaje;
 
 class Fuente {
 	public static void main(String[] args) {
-		if (args.length != 2) {
-			System.out.println("Uso: [Ejecutable] [nombre usuario] [archivoNoticia]");
+		if (args.length != 4) {
+			System.out.println("Uso: [Ejecutable] [nombre usuario] [archivoNoticia] [ipGestor] [puertoGestor]");
 			return;
 		}
 		try {
 			DatagramSocket fuenteSocket = new DatagramSocket();
-			InetAddress ipServidor = InetAddress.getByName("localhost");
+			InetAddress ipServidor = InetAddress.getByName(args[2]);
 
 			ByteArrayOutputStream bStream = new ByteArrayOutputStream();
 			ObjectOutputStream sendData = new ObjectOutputStream(bStream);
@@ -35,14 +35,14 @@ class Fuente {
 
 			byte[] serializedMessage = bStream.toByteArray();
 			DatagramPacket sendPacket = new DatagramPacket(serializedMessage,
-				serializedMessage.length, ipServidor, 9876);
+				serializedMessage.length, ipServidor, Integer.parseInt(args[3]));
 			fuenteSocket.send(sendPacket);
 
 			sendData.close();
 			bStream.close();
 
 			List<EnviarMensaje> mensajes = leerArchivo(args[0], args[1],
-				fuenteSocket, ipServidor, 9876);
+				fuenteSocket, ipServidor, Integer.parseInt(args[3]));
 			if (0 < mensajes.size()) {
 				for (EnviarMensaje mensaje : mensajes)
 					mensaje.start();

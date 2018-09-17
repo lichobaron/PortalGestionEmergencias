@@ -96,7 +96,8 @@ class ClienteThread extends Thread {
 							System.out.println("Categoría de contexto "+ict+" inválida.");
 						}
 					}
-					System.out.println("Subscripción cliente terminada!"); 
+					System.out.println("Subscripción cliente terminada!");
+					this.gestor.saveState(this.gestor.getIpGestor(), this.gestor.getPuertoGestor());
 				}
 				else{
 					clienteGestor.setIp(colaSubscripcionesCliente.peek().getValue().getKey());

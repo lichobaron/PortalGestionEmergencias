@@ -31,7 +31,7 @@ class ControlThread extends Thread {
             while(true){
                 try {
                     sendMessage(new Mensaje(Mensaje.Tipo.ERROR,"",""), ip, port);
-                    sleep(10000);               
+                    sleep(7000);               
                 } catch (Exception e) {
                     System.out.println(e);
                 }

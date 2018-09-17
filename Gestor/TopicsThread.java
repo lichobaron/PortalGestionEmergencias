@@ -59,6 +59,7 @@ class TopicsThread extends Thread {
 				else{
                     System.out.println("Se ha enviado al cliente "+ clienteGestor.getNombreUsuario()+ " la lista de temas.");
                 }
+                this.gestor.saveState(this.gestor.getIpGestor(), this.gestor.getPuertoGestor());
 				System.out.println("Envio de temas terminado!");
 				colaEnvioTemasDisponibles.remove();
 			}

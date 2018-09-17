@@ -2,8 +2,9 @@ package javeriana.edu.co;
 
 import javeriana.edu.co.*;
 import java.util.Vector;
+import java.io.Serializable;
 
-class InfoContextoGestor{
+class InfoContextoGestor implements Serializable{
     private String nombre;
     private Vector<ClienteGestor> clientes;
 

@@ -6,8 +6,9 @@ import java.util.concurrent.*;
 
 import javeriana.edu.co.Mensaje;
 import java.util.Vector;
+import java.io.Serializable;
 
-class FuenteGestor {
+class FuenteGestor implements Serializable{
 
     private InetAddress ip;
     private int puerto;

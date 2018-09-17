@@ -54,6 +54,7 @@ class FuenteThread extends Thread {
 					System.out.println("La fuente "+m.getNombreUsuario()+ " ya existe.");
 				}
 				System.out.println("Subscripción fuente terminada!");
+				this.gestor.saveState(this.gestor.getIpGestor(), this.gestor.getPuertoGestor());
 				colaSubscripcionesFuente.remove();
 			}
 		}

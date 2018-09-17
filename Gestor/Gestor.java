@@ -4,15 +4,23 @@ import javeriana.edu.co.*;
 
 import java.net.InetAddress;
 import java.util.Vector;
-import javafx.util.Pair; 
+import javafx.util.Pair;
 
-class Gestor {
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+
+class Gestor implements Serializable {
 
 	private Vector<ClienteGestor> clientes;
 	private Vector<TemaGestor> temas;
 	private Vector<TemaContextoGestor> infoContexto;
 	private Vector<FuenteGestor> fuentes;
 	private Vector<Pair<InetAddress,Integer>> backups;
+	private InetAddress ipGestor;
+	private int puertoGestor;
+
 
 	Gestor(){
 		this.clientes = new Vector<ClienteGestor>();
@@ -25,10 +33,9 @@ class Gestor {
 		this.fuentes = new Vector<FuenteGestor>();
 		this.infoContexto = new Vector<TemaContextoGestor>();
 		this.infoContexto.add(new TemaContextoGestor("edad"));
-		this.infoContexto.add(new TemaContextoGestor("residencia"));
+		this.infoContexto.add(new TemaContextoGestor("Residencia"));
 		this.infoContexto.add(new TemaContextoGestor("genero"));
 		this.infoContexto.add(new TemaContextoGestor("grupo etnico"));
-		this.findInfoContexto("residencia").addInfoContexto(new InfoContextoGestor("cachipay"));
 		this.backups = new Vector<Pair<InetAddress,Integer>>();
 	}
 	
@@ -90,6 +97,22 @@ class Gestor {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+	}
+
+	public InetAddress getIpGestor() {
+		return this.ipGestor;
+	}
+
+	public void setIpGestor(InetAddress ipGestor) {
+		this.ipGestor = ipGestor;
+	}
+
+	public int getPuertoGestor() {
+		return this.puertoGestor;
+	}
+
+	public void setPuertoGestor(int puertoGestor) {
+		this.puertoGestor = puertoGestor;
 	}
 
 	public boolean existCliente(String username){
@@ -178,5 +201,18 @@ class Gestor {
 			i++;
 		}
 		return null;
+	}
+
+	public void saveState(InetAddress ip, int port){
+		try {
+			String nArch = "Gestor-localhost-"+port+".dat";
+			FileOutputStream archivo = new FileOutputStream(nArch);
+			ObjectOutputStream file = new ObjectOutputStream(archivo);
+			file.writeObject(this);
+			file.close();
+			archivo.close();
+		} catch (IOException ex) {
+			System.out.println(ex);
+		}
 	}
 }

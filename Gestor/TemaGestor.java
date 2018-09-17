@@ -7,8 +7,9 @@ import java.util.Vector;
 
 import javeriana.edu.co.ClienteGestor;
 import java.util.Vector;
+import java.io.Serializable;
 
-class TemaGestor {
+class TemaGestor implements Serializable{
 
     private Vector<ClienteGestor> clientes;
     private String nombre;
