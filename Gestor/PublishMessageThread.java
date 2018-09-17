@@ -126,7 +126,8 @@ class PublishMessageThread extends Thread {
                     }
                     System.out.println("La fuente "+ m.getNombreUsuario()+" no se encuentra registrada.");
                 }
-				System.out.println("Envío de mensajes terminado!"); 
+                System.out.println("Envío de mensajes terminado!");
+                this.gestor.saveState(this.gestor.getIpGestor(), this.gestor.getPuertoGestor());
                 colaEnviodeMensajes.remove();
                 clientesEnviados.clear();
 			}

@@ -42,6 +42,10 @@ class EnviarMensaje extends Thread {
 		this.puerto = newPuerto;
 	}
 
+	public int getPuerto() {
+		return this.puerto;
+	}
+
 	public void run() {
 		Calendar tiempoActual = Calendar.getInstance();
 		int aux = (((((tiempoActual.get(Calendar.HOUR_OF_DAY) * 60) + 
