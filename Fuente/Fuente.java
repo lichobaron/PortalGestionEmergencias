@@ -68,9 +68,11 @@ class Fuente {
 								mensaje.setPuerto(receivePacket.getPort());
 							}
 						}
+						break;
 					}
 					case ERROR: {
 						System.out.println(receiveMensaje.getCuerpo());
+						break;
 					}
 				}
 			}
