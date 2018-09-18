@@ -1,0 +1,36 @@
+20:10:00
+Incendio;Emergencias
+Residencia:Cali
+Emergencia por incendios en Cali
+Las llamas han generado grandes afectaciones y tienen en riesgo varias viviendas.
+20:10:05
+Inundaciones en Colombia;Urabá;Lluvias;Inundaciones por el invierno;Lluvias en Antioquia
+Residencia:Antioquia
+Calamidad pública en varios municipios de Urabá por las lluvias
+Según el Dapard, hay más de 400 familias damnificadas por las inundaciones.
+20:10:05
+Incendio;Sierra Nevada de Santa Marta
+Residencia:Santa Marta
+12 hectáreas de bosque ha consumido incendio en la Sierra Nevada
+De continuar la emergencia se solicitará apoyo de la Fuera Aérea Colombiana.
+20:10:10
+Inundaciones en Colombia;Vichada;Inundaciones;Ola Invernal en Colombia;Inundaciones por el invierno
+Residencia:Vichada
+Gobernador de Vichada pide ayuda ante emergencias por inundaciones
+Sostiene que las inundaciones dejan 12.000 damnificados y apenas han llegado 2.500 mercados.
+20:10:11
+Desastres naturales;Emergencias;Avalancha
+Residencia:Oriente antioqueño
+Oportuna evacuación salvó a 50 familias de avalancha en Antioquia
+Pese a que un río de lodo y piedras bajó con furia por la vereda Quebrada Negra, no hubo heridos.
+20:10:11
+Sismo;Emergencias
+Residencia:Irán
+Dos muertos y 241 heridos en sismo de magnitud 6 en el oeste de Irán
+Uno de los fallecidos era un anciano de 70 años que sufrió un ataque al corazón durante el temblor.
+20:10:11
+Emergencias;Lluvias
+Residencia:Santander
+Lluvias desatan emergencia en San Gil, Santander
+Un menor de edad perdió la vida por la caída de muro en un polideportivo.
+0
