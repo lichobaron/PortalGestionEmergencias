@@ -46,14 +46,14 @@ class FuenteThread extends Thread {
 					puertoFuente = colaSubscripcionesFuente.peek().getValue().getValue();
 					FuenteGestor f = new FuenteGestor(ipFuente,puertoFuente,m.getNombreUsuario());
 					gestor.addFuente(f);
-					System.out.println("La fuente "+m.getNombreUsuario()+ " fue agregada.");							
+					System.out.println("**La fuente "+m.getNombreUsuario()+ " fue agregada.**");							
 				}
 				else{
 					fuenteGestor.setIp(colaSubscripcionesFuente.peek().getValue().getKey());
 					fuenteGestor.setPuerto(colaSubscripcionesFuente.peek().getValue().getValue());
-					System.out.println("La fuente "+m.getNombreUsuario()+ " ya existe.");
+					System.out.println("//La fuente "+m.getNombreUsuario()+ " ya existe.//");
 				}
-				System.out.println("Subscripción fuente terminada!");
+				System.out.println("**Subscripción fuente terminada!**\n");
 				this.gestor.saveState(this.gestor.getIpGestor(), this.gestor.getPuertoGestor());
 				colaSubscripcionesFuente.remove();
 			}

@@ -34,26 +34,25 @@ class Cliente {
 			Mensaje suscripción = new Mensaje (Mensaje.Tipo.SUBSCLIE);
 			suscripción.setNombreUsuario(args[0]);
 
-			System.out.println("Cual es tu edad: ");
+			System.out.print("Cuál es su edad: ");
 			edadUsuario = System.console().readLine();
-			System.out.println(edadUsuario);
 			if (!edadUsuario.equals(""))
-				suscripción.addInfoContext("edad:" + edadUsuario);
+				suscripción.addInfoContext("Edad:" + edadUsuario);
 
-			System.out.println("En donde resides: ");
+			System.out.print("En donde reside: ");
 			residenciaUsuario = System.console().readLine();
 			if (!residenciaUsuario.equals(""))
-				suscripción.addInfoContext("residencia:" + residenciaUsuario);
+				suscripción.addInfoContext("Residencia:" + residenciaUsuario);
 
-			System.out.println("Cual es tu genero: ");
+			System.out.print("Cual es su genero: ");
 			generoUsuario = System.console().readLine();
 			if (!generoUsuario.equals(""))
-				suscripción.addInfoContext("genero:" + generoUsuario);
+				suscripción.addInfoContext("Genero:" + generoUsuario);
 
-			System.out.println("Cual es tu grupo etnico: ");
+			System.out.print("Cual es su grupo etnico: ");
 			etniaUsuario = System.console().readLine();
 			if (!etniaUsuario.equals(""))
-				suscripción.addInfoContext("grupo etnico:" + etniaUsuario);
+				suscripción.addInfoContext("Grupo Etnico:" + etniaUsuario);
           	
           	Mensaje adquirirTemas = new Mensaje(Mensaje.Tipo.TEMAS);
 			bOStream = new ByteArrayOutputStream();
@@ -80,7 +79,7 @@ class Cliente {
 			StringTokenizer tokens = new StringTokenizer(temasUsuario, ";");
 			while (tokens.hasMoreTokens()) {
 				aux = tokens.nextToken();
-				suscripción.addTema(aux.toLowerCase());
+				suscripción.addTema(aux);
 			}
 
 			bOStream = new ByteArrayOutputStream();
@@ -104,16 +103,17 @@ class Cliente {
 				bIStream.close();
 
 				switch (receiveMensaje.getTipo()) {
-					case NOTICI: {
-						System.out.println(receiveMensaje.getCuerpo());
-					}
-					case UPT: {
+					case NOTICI:
+						System.out.println("\nNoticia Entrante...\n");
+						System.out.println(receiveMensaje.getCuerpo()+"\n");
+						break;
+					case UPT:
 						ipServidor = receivePacket.getAddress();
 						puertoServidor = receivePacket.getPort();
-					}
-					case ERROR: {
-						System.out.println(receiveMensaje.getCuerpo());
-					}
+						break;
+					case ERROR:
+						System.out.println(receiveMensaje.toString());
+						break;
 				}
 			}
 

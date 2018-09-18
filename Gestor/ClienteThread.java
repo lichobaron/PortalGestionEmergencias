@@ -45,19 +45,19 @@ class ClienteThread extends Thread {
 					puertoCliente = colaSubscripcionesCliente.peek().getValue().getValue();
 					ClienteGestor c = new ClienteGestor(ipCliente,puertoCliente,m.getNombreUsuario());
 					gestor.addCliente(c);
-					System.out.println("El cliente "+ c.getNombreUsuario()+" ha sido registrado.");
+					System.out.println("**El cliente "+ c.getNombreUsuario()+" ha sido registrado en el gestor.**");
 					for(String t : m.getTemas()){
 						TemaGestor tg = gestor.findTema(t);
 						if(tg!=null){
 							tg.addCliente(c);
-							System.out.println("El tema "+ t + "ha sido registrado al cliente "+ c.getNombreUsuario());
+							System.out.println("\tEl tema "+ t + " ha sido registrado al cliente "+ c.getNombreUsuario());
 						}
 						else{
 							if(modo==1){
 								Mensaje me = new Mensaje(Mensaje.Tipo.ERROR, "El tema "+t+" del cliente "+c.getNombreUsuario()+ " no existe.", "El gestor");
 								sendMessage(me, ipCliente, puertoCliente);
 							}
-							System.out.println("El tema "+t+" del cliente "+c.getNombreUsuario()+ " no existe.");
+							System.out.println("\tEl tema "+t+" del cliente "+c.getNombreUsuario()+ " no existe.");
 						}
 					}
 					for(String ic: m.getInfoContext()){
@@ -86,23 +86,23 @@ class ClienteThread extends Thread {
 							else{
 								icg.addCliente(c);
 							}
-							System.out.println("El tema de contexto "+ data +" con categoría "+ict+" ha sido registrado al cliente "+ c.getNombreUsuario());
+							System.out.println("**El tema de contexto "+ data +" con categoría "+ict+" ha sido registrado al cliente "+ c.getNombreUsuario()+"**");
 						}
 						else{
 							if(modo==1){
 								Mensaje me = new Mensaje(Mensaje.Tipo.ERROR,"Categoría de contexto "+ict+" inválida.", "El gestor");
 								sendMessage(me, ipCliente, puertoCliente);
 							}
-							System.out.println("Categoría de contexto "+ict+" inválida.");
+							System.out.println("//Categoría de contexto "+ict+" inválida.//");
 						}
 					}
-					System.out.println("Subscripción cliente terminada!");
+					System.out.println("**Subscripción cliente terminada!**\n");
 					this.gestor.saveState(this.gestor.getIpGestor(), this.gestor.getPuertoGestor());
 				}
 				else{
 					clienteGestor.setIp(colaSubscripcionesCliente.peek().getValue().getKey());
 					clienteGestor.setPuerto(colaSubscripcionesCliente.peek().getValue().getValue());
-					System.out.println("El cliente "+ m.getNombreUsuario()+" ya existe."); 
+					System.out.println("//El cliente "+ m.getNombreUsuario()+" ya existe.//"); 
 				}
 				colaSubscripcionesCliente.remove();
 			}

@@ -45,7 +45,7 @@ class PublishMessageThread extends Thread {
 				int puertoFuente = colaEnviodeMensajes.peek().getValue().getValue();
                 if(gestor.existFuente(m.getNombreUsuario())){
                     gestor.findFuente(m.getNombreUsuario()).addNoticia(m);
-                    System.out.println("Noticia de "+m.getNombreUsuario()+" guardada.");
+                    System.out.println("**Noticia de "+m.getNombreUsuario()+" guardada.**");
                     m.setNombreUsuario("");
                     for(String temaFuente: m.getTemas()){
                         TemaGestor temaGestor = gestor.findTema(temaFuente);
@@ -54,9 +54,9 @@ class PublishMessageThread extends Thread {
                                 for(ClienteGestor cliente: temaGestor.getClientes()){
                                     try {
                                         if(!this.existCliente(cliente.getNombreUsuario())){
-                                            sendMessage(m, cliente.getIp(),cliente.getPuerto() );
+                                            sendMessage(m, cliente.getIp(),cliente.getPuerto());
                                             clientesEnviados.add(cliente);
-                                            System.out.println("Se ha enviado al cliente "+ cliente.getNombreUsuario()+ "una noticia de "+ temaFuente);
+                                            System.out.println("\tSe ha enviado al cliente "+ cliente.getNombreUsuario()+ " una noticia de "+ temaFuente);
                                         }       	
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -68,7 +68,7 @@ class PublishMessageThread extends Thread {
                         else{
                             TemaGestor newTema = new TemaGestor(temaFuente);
                             gestor.addTema(newTema);
-                            System.out.println("Se ha creado el tema "+temaFuente+" y no se ha realizado el envío de mensajes");
+                            System.out.println("//Se ha creado el tema "+temaFuente+" y no se ha realizado el envío de mensajes//");
                         }
                     }
                     for(String ic: m.getInfoContext()){
@@ -94,9 +94,9 @@ class PublishMessageThread extends Thread {
                                     for(ClienteGestor cliente: icg.getClientes()){
                                         try {
                                             if(!this.existCliente(cliente.getNombreUsuario())){
-                                                sendMessage(m, cliente.getIp(),cliente.getPuerto() );
+                                                sendMessage(m, cliente.getIp(),cliente.getPuerto());
                                                 clientesEnviados.add(cliente);
-                                                System.out.println("Se ha enviado al cliente "+ cliente.getNombreUsuario()+ " una noticia de "+ data);
+                                                System.out.println("\t**Se ha enviado al cliente "+ cliente.getNombreUsuario()+ " una noticia de "+ data+"**\n");
                                             }      	
                                         } catch (Exception e) {
                                             e.printStackTrace();
@@ -107,7 +107,7 @@ class PublishMessageThread extends Thread {
                             }
                             else{
                                 tcg.addInfoContexto(new InfoContextoGestor(data));
-                                System.out.println("Se ha creado el tema de contexto "+data+" se ha agregado a la categoría "+ict+" y no se ha realizado el envío de mensajes");
+                                System.out.println("//Se ha creado el tema de contexto "+data+" se ha agregado a la categoría "+ict+" y no se ha realizado el envío de mensajes//");
                             }
                         }
                         else{
@@ -115,7 +115,7 @@ class PublishMessageThread extends Thread {
                                 Mensaje me = new Mensaje(Mensaje.Tipo.ERROR, "La categoría de contexto "+ict+" no es valida", "El gestor");
                                 sendMessage(me, ipFuente, puertoFuente);
                             }
-                            System.out.println("La categoría de contexto "+ict+ " no es válida");
+                            System.out.println("//La categoría de contexto "+ict+ " no es válida//");
                         }                                             
                     }
                 }
@@ -124,9 +124,9 @@ class PublishMessageThread extends Thread {
                         Mensaje me = new Mensaje(Mensaje.Tipo.ERROR, "La fuente "+ m.getNombreUsuario()+" no se encuentra registrada.", "El gestor");
                         sendMessage(me, ipFuente, puertoFuente);
                     }
-                    System.out.println("La fuente "+ m.getNombreUsuario()+" no se encuentra registrada.");
+                    System.out.println("//La fuente "+ m.getNombreUsuario()+" no se encuentra registrada.//");
                 }
-                System.out.println("Envío de mensajes terminado!");
+                System.out.println("**Envío de mensajes terminado!**\n");
                 this.gestor.saveState(this.gestor.getIpGestor(), this.gestor.getPuertoGestor());
                 colaEnviodeMensajes.remove();
                 clientesEnviados.clear();
@@ -152,7 +152,7 @@ class PublishMessageThread extends Thread {
             ObjectOutput sendData = new ObjectOutputStream(bStream);
             sendData.writeObject(mensaje);
             sendData.close();
-            byte[] serializedMessage = bStream.toByteArray();;
+            byte[] serializedMessage = bStream.toByteArray();
             DatagramPacket sendPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress, port);
             clientSocket.send(sendPacket);
             clientSocket.close();

@@ -26,16 +26,16 @@ class Gestor implements Serializable {
 		this.clientes = new Vector<ClienteGestor>();
 		this.temas = new Vector<TemaGestor>();
 		this.temas.add(new TemaGestor("Inundaciones"));
-		this.temas.add(new TemaGestor("Incendios"));
-		this.temas.add(new TemaGestor("Sismos"));
+		this.temas.add(new TemaGestor("Incendio"));
+		this.temas.add(new TemaGestor("Sismo"));
 		this.temas.add(new TemaGestor("Lluvias"));
-		this.temas.add(new TemaGestor("Avalanchas"));
+		this.temas.add(new TemaGestor("Avalancha"));
 		this.fuentes = new Vector<FuenteGestor>();
 		this.infoContexto = new Vector<TemaContextoGestor>();
-		this.infoContexto.add(new TemaContextoGestor("edad"));
+		this.infoContexto.add(new TemaContextoGestor("Edad"));
 		this.infoContexto.add(new TemaContextoGestor("Residencia"));
-		this.infoContexto.add(new TemaContextoGestor("genero"));
-		this.infoContexto.add(new TemaContextoGestor("grupo etnico"));
+		this.infoContexto.add(new TemaContextoGestor("Genero"));
+		this.infoContexto.add(new TemaContextoGestor("Grupo Etnico"));
 		this.backups = new Vector<Pair<InetAddress,Integer>>();
 	}
 	

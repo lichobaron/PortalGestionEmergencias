@@ -20,42 +20,43 @@ class MainGestor {
 		try {
             int gestorPort,modo;
             String input;
+            System.out.println("        =============   PORTAL DEL GESTIÓN DE EMERGENCIAS   =============");
             System.out.println("Digite el modo del gestor");
             System.out.println("  - 0: para backup");
             System.out.println("  - 1: para modo normal");
             input = System.console().readLine();
             modo = Integer.parseInt(input);
-            System.out.println("Desea cargar un gestor? (s/n)");
+            System.out.print("¿Desea cargar un gestor? (s/n) : ");
             String cargar = System.console().readLine();
             if(cargar.equals("s")){
-                System.out.println("Digite el nombre del archivo: ");
+                System.out.print("Digite el nombre del archivo: ");
                 cargar = System.console().readLine();
                 ObjectInputStream file = new ObjectInputStream(new FileInputStream(cargar));
                 gestor = (Gestor) file.readObject();
-                System.out.println("Archivo cargado con éxito.");
+                System.out.println("Archivo cargado con éxito!!");
                 for(TemaGestor f : gestor.getTemas()){
                     System.out.println(f.toString());
                 }
             }else{
                 gestor= new Gestor();
-                System.out.println("Desea añadir broker asociado? (s/n)");
+                System.out.print("¿Desea añadir broker asociado? (s/n) : ");
                 String opc = System.console().readLine();
                 String ipi;
                 String pi;
                 if(opc.equals("s")){
-                    System.out.println("Digite ip del broker asociado:");
+                    System.out.print("Digite ip del broker asociado: ");
                     ipi = System.console().readLine();
-                    System.out.println("Digite puerto del broker asociado:");
+                    System.out.print("Digite puerto del broker asociado: ");
                     pi = System.console().readLine();
                     gestor.addBackup(ipi, Integer.parseInt(pi));
                 }
             }
-            System.out.println("Digite su puerto:");
+            System.out.print("Digite su puerto: ");
             input = System.console().readLine();
             gestorPort = Integer.parseInt(input);
             gestor.setIpGestor(InetAddress.getByName("localhost"));
             gestor.setPuertoGestor(gestorPort);
-            System.out.println("Digite el tamaño maximo de cola:");
+            System.out.print("Digite el tamaño maximo de cola de mensajes del gestor: ");
             input = System.console().readLine();
             int tamMax = Integer.parseInt(input);
             
@@ -104,22 +105,21 @@ class MainGestor {
                     if (mensaje != null){
                         Pair<InetAddress,Integer> t1= new Pair<>(mensaje.getIp(),mensaje.getPuerto());
                         Pair<Mensaje,Pair<InetAddress,Integer>> t2 = new Pair<>(mensaje,t1);   
-                        System.out.println(mensaje);
                         switch(mensaje.getTipo()) {
                             case SUBSCLIE:
-                                System.out.println("Esperando subscripción cliente");
+                                System.out.println("Recepción de suscripción de cliente...");
                                 colaSubscripcionesCliente.add(t2);
                                 elapsedTime = System.currentTimeMillis() - startTime;
                                 startTime = System.currentTimeMillis();
                                 break;
                             case SUBSFUEN:
-                                System.out.println("Esperando subscripción fuente");
+                                System.out.println("Recepción de suscripción de fuente...");
                                 colaSubscripcionesFuente.add(t2);
                                 elapsedTime = System.currentTimeMillis() - startTime;
                                 startTime = System.currentTimeMillis();
                                 break;
                             case NOTICI:
-                                System.out.println("Esperando backup de noticias");
+                                System.out.println("Recepción de backup de noticias...");
                                 colaEnviodeMensajes.add(t2);
                                 elapsedTime = System.currentTimeMillis() - startTime;
                                 startTime = System.currentTimeMillis();
@@ -127,11 +127,18 @@ class MainGestor {
                             case UPT:
                                 modo=1;
                                 for(ClienteGestor client: gestor.getClientes()){
+
                                     sendMessage(new Mensaje(Mensaje.Tipo.UPT,"",""),client.getIp(), client.getPuerto(), serverSocket);
                                 }
                                 for(FuenteGestor fuent: gestor.getFuentes()){
                                     sendMessage(new Mensaje(Mensaje.Tipo.UPT,"",""),fuent.getIp(), fuent.getPuerto(), serverSocket);
                                 }
+                                for(ClienteGestor c : gestor.getClientes()){
+                                    System.out.println(c.toString());
+                                }
+                                clienteThread.setModo(modo);
+                                fuenteThread.setModo(modo);
+                                publishMessageThread.setModo(modo);
                                 controlThread.stop();
                                 timeOutThread.start();
                                 elapsedTime = System.currentTimeMillis() - startTime;
@@ -154,7 +161,10 @@ class MainGestor {
                                 sendMessage(new Mensaje(Mensaje.Tipo.UPT,"",""),fuent.getIp(), fuent.getPuerto(), serverSocket);
                             }
                             controlThread.stop();
-                            timeOutThread.start();                            
+                            timeOutThread.start();
+                            clienteThread.setModo(modo);
+                            fuenteThread.setModo(modo);
+                            publishMessageThread.setModo(modo);                           
                         }				
                     }
                 }
@@ -162,22 +172,21 @@ class MainGestor {
                     if (mensaje != null){
                         Pair<InetAddress,Integer> t1= new Pair<>(ipMensaje,puertoMensaje);
                         Pair<Mensaje,Pair<InetAddress,Integer>> t2 = new Pair<>(mensaje,t1);   
-                        System.out.println(mensaje);
                         switch(mensaje.getTipo()) {
                             case SUBSCLIE:
-                                System.out.println("Esperando subscripción cliente");
+                                System.out.println("Recepción de suscripción de cliente...");
                                 colaSubscripcionesCliente.add(t2);
                                 break;
                             case SUBSFUEN:
-                                System.out.println("Esperando subscripción fuente");
+                                System.out.println("Recepción de suscripción de fuente...");
                                 colaSubscripcionesFuente.add(t2);
                                 break;
                             case NOTICI:
-                                System.out.println("Esperando envío de noticias");
+                                System.out.println("Recepción información para envío de noticias...");
                                 colaEnviodeMensajes.add(t2);
                                 break;
                             case TEMAS:
-                                System.out.println("Esperando envío de temas");
+                                System.out.println("Enviando lista de temas...");
                                 colaEnvioTemasDisponibles.add(t2);
                                 break;
                             default :

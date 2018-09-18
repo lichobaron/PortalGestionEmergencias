@@ -55,7 +55,7 @@ class EnviarMensaje extends Thread {
 		int tiempoDormir = this.tiempoEnvio - aux;
 		
 		try {
-			if (tiempoDormir < 0)
+			if (tiempoDormir > 0)
 				Thread.sleep(tiempoDormir);
 			
 			ByteArrayOutputStream bStream = new ByteArrayOutputStream ();

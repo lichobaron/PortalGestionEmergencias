@@ -40,7 +40,7 @@ class TimeOutThread extends Thread {
             }
         }
         else{
-            System.out.println("No hay mas nodos distribuidos!");
+            System.out.println("No hay nodos de respaldo!!\n");
         }
     }
     

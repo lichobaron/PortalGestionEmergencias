@@ -54,13 +54,13 @@ class TopicsThread extends Thread {
                 m.setNombreUsuario("El gestor");
                 sendMessage(m, IPAddress, puerto);
                 if(clienteGestor==null){
-                    System.out.println("Se ha enviado al cliente sin registrar la lista de temas.");					
+                    System.out.println("**Se ha enviado al cliente sin registrar la lista de temas.**");					
 				}
 				else{
-                    System.out.println("Se ha enviado al cliente "+ clienteGestor.getNombreUsuario()+ " la lista de temas.");
+                    System.out.println("**Se ha enviado al cliente "+ clienteGestor.getNombreUsuario()+ " la lista de temas.**");
                 }
                 this.gestor.saveState(this.gestor.getIpGestor(), this.gestor.getPuertoGestor());
-				System.out.println("Envio de temas terminado!");
+				System.out.println("**Envio de temas terminado!**\n");
 				colaEnvioTemasDisponibles.remove();
 			}
         }
